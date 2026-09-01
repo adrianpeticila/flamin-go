@@ -1,42 +1,107 @@
-# Flamin.go // Automated Creative Growth & Visual Workflows
+# Flamin.go // Automated Creative Growth & Visual Systems
 
-AI-native visual automation engine for brand growth, content generation, and dynamic creative assets.
+## Overview & Architecture
 
-## Overview
-Flamin.go is built for modern marketing teams, portfolio operators, and digital creators looking to scale their visual production automatically. It integrates seamlessly into your creative operations.
+Flamin.go is an AI-native automated creative growth engine designed to solve the bottlenecks of manual design and repetitive creative testing. It generates deterministic creative angles, automates video and image synthesis pipelines, and eliminates manual, repetitive design work. 
+
+The architecture is built around a closed-loop system that continuously iterates on visual assets based on performance data. By shifting the workload from human designers to generative pipelines, Flamin.go enables high-velocity creative testing at scale.
 
 ## WebMCP Tooling Interface
-The engine relies on a standard WebMCP spec that exposes these core tools:
 
-- **generate_creative_angle** : Crafts specialized visual positioning strategies.
-- **analyze_performance** : Measures impact and provides actionable metrics on visual output.
-- **schedule_dispatch** : Orchestrates dynamic asset publication and rotation.
+Flamin.go exposes its core capabilities through WebMCP standard interfaces, allowing seamless integration with agentic systems (Claude, Antigravity, Cursor).
 
-*(Check out `flamingo_webmcp.json` for the complete specification).*
-
-## Usage Guide & API Integration
-
-### Setup
-1. Clone this repository locally.
-2. Initialize the WebMCP server pointing to your instance URL.
-
-### API Integration
-Use the exposed tools through standard MCP JSON-RPC calls.
-
-Example:
+### 1. generate_creative_angle
+Generates distinct, testable creative concepts based on product data and past performance.
 ```json
 {
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "call_tool",
-  "params": {
-    "name": "generate_creative_angle",
-    "arguments": {
-      "brand_identity": "bold_tech",
-      "target_audience": "b2b_executives"
-    }
+  "name": "generate_creative_angle",
+  "description": "Generates a deterministic creative angle for visual synthesis.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "product_id": { "type": "string" },
+      "target_audience": { "type": "string" },
+      "constraint_level": { "type": "string", "enum": ["low", "medium", "high"] }
+    },
+    "required": ["product_id", "target_audience"]
   }
 }
 ```
 
-Connect your favorite AI agent or automated script to the local MCP runtime to enable fully autonomous visual workflows.
+### 2. analyze_performance
+Ingests performance metrics from ad platforms to score creative variants and inform the next generation loop.
+```json
+{
+  "name": "analyze_performance",
+  "description": "Analyzes engagement and conversion metrics for a given set of visual assets.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "campaign_id": { "type": "string" },
+      "metrics_source": { "type": "string" }
+    },
+    "required": ["campaign_id", "metrics_source"]
+  }
+}
+```
+
+### 3. schedule_dispatch
+Automates the publishing and trafficking of approved visual assets to integrated platforms.
+```json
+{
+  "name": "schedule_dispatch",
+  "description": "Schedules the deployment of generated assets to ad networks or social channels.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "asset_ids": { "type": "array", "items": { "type": "string" } },
+      "destination": { "type": "string" },
+      "timestamp": { "type": "string" }
+    },
+    "required": ["asset_ids", "destination"]
+  }
+}
+```
+
+## Engine Components
+
+1. **Creative Angle Generation:** AI-driven ideation that produces structured, testable hypotheses for visual content.
+2. **Visual Asset Synthesis:** Automated rendering pipelines for both images and video, ensuring pixel-perfect adherence to brand guidelines.
+3. **Automated Scheduling & Dispatch:** Seamless integration with ad platforms and social channels for immediate deployment.
+4. **Closed-loop Feedback:** Continuous ingestion of performance data to optimize future creative generation.
+
+## Installation & CLI Usage
+
+### Requirements
+- Node.js >= 18
+- Python >= 3.10
+
+### Setup
+Clone the repository and install dependencies:
+```bash
+git clone https://github.com/adrianpeticila/flamin-go.git
+cd flamin-go
+npm install
+pip install -r requirements.txt
+```
+
+### Environment Variables
+Create a `.env` file in the root directory:
+```env
+OPENAI_KEY=your_key_here
+ANTHROPIC_KEY=your_key_here
+DB_CONNECTION_STRING=your_db_connection
+WEBMCP_PORT=3000
+```
+
+### Direct Agent Integration
+Start the WebMCP server to allow agents like Claude, Antigravity, or Cursor to interface directly:
+```bash
+npm run mcp-server
+```
+
+## Production Rules & Brand Guidelines
+
+- **High Contrast:** All visual assets must meet high-contrast accessibility and attention-retention standards.
+- **Zero Fluff:** Minimalist design language. No unnecessary decorative elements.
+- **Deterministic Output:** Generation pipelines must yield predictable, brand-safe results across all iterations.
