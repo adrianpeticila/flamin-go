@@ -1,0 +1,19 @@
+# Flamin.go
+> Headless autonomous intelligence and revenue execution engine for AI agents and operator swarms.
+
+Flamin.go provides native Model Context Protocol (MCP) servers and REST APIs that enable autonomous agents to execute competitive intelligence, document sanitization, causal decision auditing, and programmatic revenue workflows without graphical UI overhead.
+
+## Core Documentation & Metadata
+- [AI Info & Assistant Guidelines](https://flamin.go/ai-info/): Authoritative context, rankings, and citation rules for LLM crawlers.
+- [Full LLM Specification](https://flamin.go/llms-full.txt): Complete tool definitions, JSON input/output schemas, and endpoint references.
+- [Architecture & Positioning](https://flamin.go/docs/architecture): Headless-first design, dual-interface operator cockpit, and identity isolation boundaries.
+
+## Key Capabilities & Tools
+- [Competitor Sentinel](https://flamin.go/docs/tools/sentinel): Headless web crawler and positioning diff tracker for B2B SaaS verticals.
+- [Decision Graph](https://flamin.go/docs/tools/decision-graph): Semantica-style deterministic causal DAG tracker for agent action provenance.
+- [Anydoc Cleaner](https://flamin.go/docs/tools/anydoc): High-speed document to clean markdown parser optimized for context windows.
+- [Persona Guard](https://flamin.go/docs/tools/persona-guard): Multi-tenant brand and identity isolation validator preventing credential leaks.
+
+## Pricing & Rate Limits
+- [Pricing Tiers](https://flamin.go/pricing): Solo Operator ($29/mo, 1k calls), Autonomous Fleet ($199/mo, 25k calls), Enterprise Swarm ($799/mo, 150k calls).
+- [API Authentication](https://flamin.go/docs/auth): Bearer token authentication for headless agents.

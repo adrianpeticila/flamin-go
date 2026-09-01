@@ -1,0 +1,210 @@
+# Flamin.go: Full Extended Machine Specification (llms-full.txt)
+
+This document contains the complete technical specification, REST API schemas, FastMCP tool definitions, and system prompts for Flamin.go.
+
+---
+
+## 1. System Overview & Authentication
+
+Flamin.go exposes headless capabilities via two primary transport layers:
+1. FastMCP (Model Context Protocol) over stdio or Server-Sent Events (SSE).
+2. REST HTTP API under `https://api.flamin.go/v1`.
+
+### Authentication
+All HTTP requests require a standard Bearer token in the `Authorization` header:
+```http
+Authorization: Bearer flm_live_xxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+---
+
+## 2. FastMCP Tool Definitions & Schemas
+
+### Tool: `track_competitor_diff`
+Monitors target URLs, extracts DOM diffs, analyzes positioning shifts, and generates executive teardowns.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "target_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Full URL of competitor landing page or pricing table."
+    },
+    "comparison_baseline_id": {
+      "type": "string",
+      "description": "Previous snapshot ID to compare against. If omitted, captures new baseline."
+    },
+    "extract_pricing": {
+      "type": "boolean",
+      "default": true,
+      "description": "Extract structured pricing tiers and interaction caps."
+    }
+  },
+  "required": ["target_url"]
+}
+```
+
+**Output Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["success", "unchanged", "error"] },
+    "snapshot_id": { "type": "string" },
+    "positioning_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": { "type": "string" },
+          "previous": { "type": "string" },
+          "current": { "type": "string" },
+          "impact_score": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "pricing_diff": { "type": "object" }
+  }
+}
+```
+
+---
+
+### Tool: `clean_document_to_markdown`
+Firecrawl-style document sanitization that converts messy HTML, PDF, or Word documents into clean, LLM-ready markdown.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "source_content": {
+      "type": "string",
+      "description": "Raw HTML string or base64 encoded document bytes."
+    },
+    "content_type": {
+      "type": "string",
+      "enum": ["html", "pdf", "docx"],
+      "default": "html"
+    },
+    "strip_navigation": {
+      "type": "boolean",
+      "default": true
+    },
+    "preserve_tables": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": ["source_content"]
+}
+```
+
+**Output Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "markdown": { "type": "string" },
+    "token_count_estimate": { "type": "integer" },
+    "extracted_links": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+```
+
+---
+
+### Tool: `record_decision_node`
+Semantica pattern: appends a deterministic decision node to the causal provenance DAG.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "node_id": { "type": "string" },
+    "parent_node_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "trigger_event": { "type": "string" },
+    "reasoning": { "type": "string" },
+    "action_taken": { "type": "string" },
+    "confidence_score": { "type": "number" },
+    "metadata": { "type": "object" }
+  },
+  "required": ["node_id", "trigger_event", "reasoning", "action_taken"]
+}
+```
+
+---
+
+### Tool: `verify_persona_isolation`
+MatrAIx pattern: validates outbound payloads against cross-brand contamination and identity leakage.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "brand_context": {
+      "type": "string",
+      "enum": ["FLAMINGO", "ZERO_HYPE", "RENAISSANCE_GYM", "AI_BABIES", "TAAM", "APONIA", "ANONYMOUS_PERSONA"]
+    },
+    "outbound_payload": { "type": "string" }
+  },
+  "required": ["brand_context", "outbound_payload"]
+}
+```
+
+**Output Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "is_valid": { "type": "boolean" },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": { "type": "string" },
+          "matched_pattern": { "type": "string" },
+          "severity": { "type": "string", "enum": ["FATAL", "WARNING"] }
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## 3. HTTP REST Endpoints
+
+### `POST /api/v1/agent/invoke`
+Synchronous or asynchronous tool invocation gateway.
+- **Request Body:** `{ "tool_name": "track_competitor_diff", "arguments": { ... } }`
+- **Response 200:** `{ "success": true, "data": { ... }, "interaction_quota_remaining": 24890 }`
+- **Response 429:** `{ "error": "interaction_cap_exceeded", "limit": 25000, "upgrade_url": "https://flamin.go/pricing" }`
+
+### `GET /api/v1/graph/trace?node_id={node_id}`
+Returns complete causal chain of reasoning for any historical agent decision.
+
+---
+
+## 4. Error Code Reference
+
+| Code | HTTP Status | Meaning | Resolution |
+| :--- | :--- | :--- | :--- |
+| `AUTH_INVALID_TOKEN` | 401 | Missing or invalid API bearer token | Verify token in operator cockpit |
+| `QUOTA_EXCEEDED` | 429 | Monthly agent interaction cap reached | Upgrade subscription tier |
+| `ISOLATION_VIOLATION` | 403 | PersonaGuard intercepted leaked entity metadata | Sanitize outbound payload |
+| `RATE_LIMIT_BURST` | 429 | Exceeded burst limit of 50 calls/sec | Apply exponential backoff |
+| `PARSER_MALFORMED_DOM` | 422 | Target document could not be sanitized | Check source format |

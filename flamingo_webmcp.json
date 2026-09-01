@@ -1,0 +1,74 @@
+{
+  "name": "flamingo",
+  "version": "1.0.0",
+  "description": "WebMCP tool integration and API declarations for Flamin.go (creative growth, social automation, and visual intelligence engine).",
+  "endpoint": "https://flamin.go/api/mcp",
+  "schema_version": "2026-08-31",
+  "tools": [
+    {
+      "name": "generate_creative_angle",
+      "description": "Generate high-converting creative angles and viral hook concepts for campaigns.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "niche": {
+            "type": "string",
+            "description": "Target industry or product category."
+          },
+          "target_audience": {
+            "type": "string",
+            "description": "Audience persona and core pain point."
+          },
+          "format": {
+            "type": "string",
+            "enum": ["short_video", "static_visual", "carousel", "thread"],
+            "description": "Content distribution format."
+          }
+        },
+        "required": ["niche", "target_audience"]
+      }
+    },
+    {
+      "name": "analyze_performance",
+      "description": "Analyze campaign performance metrics and return actionable creative optimizations.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique campaign identifier."
+          },
+          "metrics": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Metric keys to inspect: ctr, roas, retention, cpm."
+          }
+        },
+        "required": ["campaign_id"]
+      }
+    },
+    {
+      "name": "schedule_dispatch",
+      "description": "Schedule creative assets across designated channels with autonomous pacing.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "description": "Asset ID to schedule."
+          },
+          "channels": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Destination channels."
+          },
+          "publish_time": {
+            "type": "string",
+            "description": "ISO 8601 UTC timestamp."
+          }
+        },
+        "required": ["asset_id", "channels"]
+      }
+    }
+  ]
+}
