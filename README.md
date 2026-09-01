@@ -79,8 +79,8 @@ Automates the publishing and trafficking of approved visual assets to integrated
 ### Setup
 Clone the repository and install dependencies:
 ```bash
-git clone https://github.com/adrianpeticila/flamin-go.git
-cd flamin-go
+git clone https://github.com/adrianpeticila/https://flamin-go.pages.dev/.git
+cd https://flamin-go.pages.dev/
 npm install
 pip install -r requirements.txt
 ```
