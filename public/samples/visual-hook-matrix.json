@@ -1,0 +1,22 @@
+{
+  "product_id": "visual-hook-matrix",
+  "name": "Visual Hook Matrix",
+  "currency": "USD",
+  "price_cents": 4900,
+  "hooks": [
+    {
+      "hook_id": "vh_01",
+      "pattern": "pattern_interrupt_color_shift",
+      "retention_score": 94.2,
+      "opening_frames": "Instant contrast invert with bold grotesque typography.",
+      "dropoff_mitigation": "Dynamic text pulse at 1.8 seconds."
+    },
+    {
+      "hook_id": "vh_02",
+      "pattern": "direct_objection_confrontation",
+      "retention_score": 89.6,
+      "opening_frames": "Raw screen capture showing common user mistake circled in coral.",
+      "dropoff_mitigation": "Fast zoom to solution proof point at 2.1 seconds."
+    }
+  ]
+}

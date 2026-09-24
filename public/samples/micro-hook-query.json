@@ -1,0 +1,17 @@
+{
+  "product_id": "micro-hook-query",
+  "name": "Micro Hook Query",
+  "currency": "USD",
+  "price_cents": 500,
+  "settlement_rail": "x402",
+  "query_result": {
+    "recommended_angle": "high_contrast_direct_response",
+    "hook_text": "Why 90% of creative testing wastes ad spend",
+    "predicted_3s_retention": "68.4%",
+    "color_tokens": {
+      "primary": "#FF6F59",
+      "background": "#171717",
+      "text": "#FFFFFF"
+    }
+  }
+}

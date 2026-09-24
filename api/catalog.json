@@ -1,0 +1,29 @@
+[
+  {
+    "id": "ad-concept-pack",
+    "name": "Ad Concept Pack",
+    "price_cents": 9900,
+    "currency": "USD",
+    "description": "High-velocity ad concept generation system delivering creative angle variations, hook scripts, and audience targeting parameters for rapid performance testing.",
+    "sample_output_url": "https://flamin-go.pages.dev/samples/ad-concept-pack.json",
+    "checkout_type": "stripe_hosted"
+  },
+  {
+    "id": "visual-hook-matrix",
+    "name": "Visual Hook Matrix",
+    "price_cents": 4900,
+    "currency": "USD",
+    "description": "Structured visual hook library and retention scoring matrix designed for automated video and image ad creative synthesis pipelines.",
+    "sample_output_url": "https://flamin-go.pages.dev/samples/visual-hook-matrix.json",
+    "checkout_type": "stripe_hosted"
+  },
+  {
+    "id": "micro-hook-query",
+    "name": "Micro Hook Query",
+    "price_cents": 500,
+    "currency": "USD",
+    "description": "Programmatic single-query visual hook scoring and real-time creative angle generation over x402 micropayment rail.",
+    "sample_output_url": "https://flamin-go.pages.dev/samples/micro-hook-query.json",
+    "checkout_type": "x402"
+  }
+]

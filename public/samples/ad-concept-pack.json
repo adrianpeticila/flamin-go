@@ -1,0 +1,22 @@
+{
+  "product_id": "ad-concept-pack",
+  "name": "Ad Concept Pack",
+  "currency": "USD",
+  "price_cents": 9900,
+  "concepts": [
+    {
+      "angle": "anti_fatigue_efficiency",
+      "hook_headline": "Stop Redesigning the Same Banner 40 Times",
+      "visual_description": "Split screen comparison of manual figma drag-and-drop vs automated deterministic asset matrix.",
+      "target_cpa_benchmark_usd": 14.50,
+      "recommended_format": "9:16 vertical video"
+    },
+    {
+      "angle": "autonomous_pipeline_speed",
+      "hook_headline": "100 High-Contrast Ad Variants in 90 Seconds",
+      "visual_description": "Fast-paced terminal UI showing asset synthesis and automated brand token validation.",
+      "target_cpa_benchmark_usd": 12.20,
+      "recommended_format": "1:1 square image"
+    }
+  ]
+}
