@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Competitor Teardown Dossier - Flamin.go ($49 Solopreneur Edition)</title>
+<!-- ============================================================
+     FLAMIN.GO // EXECUTIVE COMPETITOR TEARDOWN DOSSIER
+     Single-file. Zero dependencies. Vanilla JS. Print-optimized.
+     Brand: light theme / flamingo pink / mono metadata tags
+     ============================================================ -->
+<style>
+  /* ---------- Design tokens ---------- */
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f8fafc;
+    --ink: #0f172a;
+    --ink-2: #1e293b;
+    --ink-3: #475569;
+    --ink-4: #94a3b8;
+    --line: #e2e8f0;
+    --pink: #FF1A75;
+    --pink-deep: #E60067;
+    --pink-soft: #fff0f5;
+    --green: #059669;
+    --amber: #d97706;
+    --red: #dc2626;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg-alt);
+    color: var(--ink-2);
+    line-height: 1.65;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1080px; margin: 0 auto; padding: 24px 20px 96px; }
+
+  /* ---------- Mono metadata tag utility ---------- */
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 10px;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .tag.pink { color: var(--pink-deep); border-color: #ffd6e4; background: var(--pink-soft); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ---------- Header ---------- */
+  header.masthead {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 16px;
+  }
+  header.masthead .brandline {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .brand { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+  .brand strong { color: var(--pink); }
+
+  h1.dossier-title {
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  h1.dossier-title .vs { color: var(--pink); font-family: var(--mono); font-weight: 600; font-size: 0.55em; vertical-align: middle; padding: 0 6px; }
+  .dossier-sub { color: var(--ink-3); max-width: 62ch; margin-bottom: 22px; }
+
+  .scorecard-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .scorecard {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    background: var(--bg-alt);
+  }
+  .scorecard .label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ink-4); margin-bottom: 6px;
+  }
+  .scorecard .value { font-size: 26px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .scorecard .value small { font-size: 13px; color: var(--ink-4); font-weight: 500; }
+  .scorecard.hero-score { border-color: #ffb9d2; background: var(--pink-soft); }
+  .scorecard.hero-score .value { color: var(--pink-deep); }
+
+  /* ---------- Section chrome ---------- */
+  section.panel {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-top: 28px;
+    overflow: hidden;
+  }
+  section > .panel-head {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .panel-head h2 { font-size: 17px; color: var(--ink); letter-spacing: -0.01em; }
+  .panel-head h2 .num {
+    font-family: var(--mono); color: var(--pink); font-size: 12px;
+    display: block; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;
+  }
+  .panel-body { padding: 24px; }
+
+  /* ---------- Controls bar ---------- */
+  .controls {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: end;
+  }
+  .controls label {
+    display: block; font-family: var(--mono); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-4); margin-bottom: 5px;
+  }
+  .controls input[type="text"] {
+    font-family: var(--sans); font-size: 14px; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 10px; width: 210px; background: var(--bg-alt);
+  }
+  .controls input[type="text"]:focus { outline: 2px solid var(--pink); outline-offset: 1px; border-color: transparent; }
+  .btn {
+    appearance: none; border: 1px solid var(--line); background: var(--bg);
+    color: var(--ink-2); font-family: var(--mono); font-size: 12px;
+    border-radius: 6px; padding: 9px 14px; cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  .btn:hover { border-color: var(--pink); color: var(--pink-deep); }
+  .btn.primary { background: var(--pink); border-color: var(--pink); color: #fff; }
+  .btn.primary:hover { background: var(--pink-deep); border-color: var(--pink-deep); color: #fff; }
+
+  /* ---------- Battlefield matrix (Section 1) ---------- */
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.matrix th, table.matrix td {
+    border-bottom: 1px solid var(--line); padding: 11px 14px; text-align: left; vertical-align: top;
+  }
+  table.matrix thead th {
+    font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--ink-3); background: var(--bg-alt);
+    border-bottom: 1px solid var(--line);
+  }
+  table.matrix thead th.col-client { color: var(--pink-deep); }
+  table.matrix tbody th[scope="row"] {
+    font-weight: 600; color: var(--ink); width: 220px; font-size: 13px;
+  }
+  .pill {
+    font-family: var(--mono); font-size: 10.5px; padding: 2px 9px;
+    border-radius: 999px; display: inline-block; white-space: nowrap;
+  }
+  .pill.win  { background: #ecfdf5; color: var(--green); border: 1px solid #a7f3d0; }
+  .pill.risk { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+  .pill.mid  { background: #fffbeb; color: var(--amber); border: 1px solid #fde68a; }
+  .bar-wrap { min-width: 110px; }
+  .bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; margin-top: 5px; }
+  .bar i { display: block; height: 100%; background: var(--pink); border-radius: 999px; }
+  .num-cell { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Objection taxonomy (Section 2) ---------- */
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink-3);
+    border-radius: 999px; padding: 6px 14px; transition: all .15s;
+  }
+  .chip:hover { border-color: var(--pink); color: var(--pink-deep); }
+  .chip.active { background: var(--pink); border-color: var(--pink); color: #fff; }
+  ul.objections { list-style: none; }
+  ul.objections li {
+    border: 1px solid var(--line); border-left: 3px solid var(--pink);
+    border-radius: 6px; padding: 13px 16px; margin-bottom: 10px;
+    display: flex; gap: 14px; align-items: baseline;
+  }
+  ul.objections li.sev-high   { border-left-color: var(--red); }
+  ul.objections li.sev-medium { border-left-color: var(--amber); }
+  ul.objections li.sev-low    { border-left-color: var(--green); }
+  .obj-text { flex: 1; }
+  .obj-source { font-family: var(--mono); font-size: 10.5px; color: var(--ink-4); margin-top: 3px; }
+  .obj-empty { color: var(--ink-4); font-style: italic; padding: 20px 4px; display: none; }
+
+  /* ---------- AI search audit (Section 3) ---------- */
+  .sim-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ai-window { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .ai-chrome {
+    background: var(--bg-alt); border-bottom: 1px solid var(--line);
+    padding: 9px 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .ai-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .ai-chrome .engine-name { font-family: var(--mono); font-size: 12px; color: var(--ink-3); margin-left: auto; }
+  .ai-body { padding: 20px 22px; font-size: 14px; }
+  .ai-body p { margin-bottom: 12px; }
+  .hl-hallucination {
+    background: #fef2f2; border-bottom: 1px dashed var(--red);
+    padding: 0 2px; cursor: help; position: relative;
+  }
+  .hl-cited { background: var(--pink-soft); border-bottom: 1px dashed var(--pink); padding: 0 2px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 16px; font-size: 12px; color: var(--ink-3); }
+  .key { display: inline-block; width: 26px; border-bottom: 2px dashed; margin-right: 6px; vertical-align: middle; }
+  .key.red { border-color: var(--red); } .key.pinkk { border-color: var(--pink); }
+  .prompt-box {
+    font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+    background: var(--bg-alt); border: 1px dashed var(--line); border-radius: 6px;
+    padding: 8px 12px; margin-bottom: 16px;
+  }
+  .prompt-box b { color: var(--pink-deep); font-weight: 600; }
+
+  /* ---------- Attack plan (Section 4) ---------- */
+  ol.plan { list-style: none; counter-reset: step; }
+  ol.plan > li {
+    counter-increment: step; border: 1px solid var(--line); border-radius: var(--radius);
+    margin-bottom: 14px; overflow: hidden;
+  }
+  ol.plan > li::before { content: none; }
+  .step-head {
+    display: flex; align-items: baseline; gap: 12px; padding: 13px 18px;
+    background: var(--bg-alt); border-bottom: 1px solid var(--line); cursor: pointer;
+  }
+  .step-head::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--pink);
+  }
+  .step-head h3 { font-size: 14px; color: var(--ink); flex: 1; }
+  .step-toggle { font-family: var(--mono); font-size: 12px; color: var(--ink-4); }
+  .step-body { padding: 18px; display: none; }
+  ol.plan > li.open .step-body { display: block; }
+  ol.plan > li.open .step-toggle { content: "-"; }
+  .code-block {
+    position: relative; background: #0f172a; color: #e2e8f0;
+    font-family: var(--mono); font-size: 12px; line-height: 1.7;
+    border-radius: 6px; padding: 16px 18px; overflow-x: auto; white-space: pre;
+  }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    font-family: var(--mono); font-size: 10.5px;
+    background: rgba(255,255,255,.08); color: #cbd5e1;
+    border: 1px solid rgba(255,255,255,.18); border-radius: 5px;
+    padding: 4px 10px; cursor: pointer;
+  }
+  .copy-btn:hover { background: var(--pink); border-color: var(--pink); color: #fff; }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* ---------- Footer ---------- */
+  footer.metafoot {
+    margin-top: 40px; border-top: 1px solid var(--line); padding-top: 18px;
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  footer.metafoot p { font-family: var(--mono); font-size: 11px; color: var(--ink-4); }
+
+  /* ---------- Toast ---------- */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: #fff; font-family: var(--mono); font-size: 12px;
+    padding: 10px 18px; border-radius: 999px; opacity: 0;
+    transition: transform .25s, opacity .25s; pointer-events: none; z-index: 99;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 720px) {
+    .panel-body, header.masthead { padding: 18px; }
+    .controls input[type="text"] { width: 100%; }
+    .matrix-scroll { overflow-x: auto; }
+    table.matrix { min-width: 640px; }
+  }
+
+  /* ============================================================
+     PRINT / PDF OPTIMIZATION
+     ============================================================ */
+  @media print {
+    @page {
+      size: A4;
+      margin: 16mm 14mm;
+    }
+    :root { --bg-alt: #ffffff; }
+    body { font-size: 10.5pt; background: #fff; }
+    .page { max-width: none; padding: 0; }
+    header.masthead, section.panel, .scorecard,
+    ul.objections li, ol.plan > li, .ai-window {
+      break-inside: avoid; page-break-inside: avoid;
+      border-color: #cbd5e1;
+    }
+    section.panel { break-before: page; margin-top: 0; padding-top: 8mm; border: none; }
+    section.panel:first-of-type { break-before: auto; }
+    .panel-body { padding: 10px 0; }
+    .panel-head { border-bottom: 2px solid #0f172a; padding: 0 0 6px; }
+    .controls, .filter-bar, .copy-btn, #toast, .btn, .sim-tabs { display: none !important; }
+    .step-body { display: block !important; }
+    .ai-window { border: 1px solid #94a3b8; }
+    .ai-chrome { background: #fff; }
+    .code-block {
+      background: #f8fafc !important; color: #0f172a !important;
+      border: 1px solid #cbd5e1; white-space: pre-wrap; word-break: break-all;
+    }
+    a { color: inherit; text-decoration: none; }
+    h1.dossier-title { font-size: 22pt; }
+    .print-only-note { display: block !important; }
+    footer.metafoot { border-top: 1px solid #94a3b8; }
+  }
+  .print-only-note { display: none; font-family: var(--mono); font-size: 9pt; color: #64748b; margin-top: 6mm; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============ HEADER ============ -->
+  <header class="masthead">
+    <div class="brandline">
+      <span class="brand"><strong>[FLAMIN.GO]</strong> executive teardown dossier</span>
+      <div class="tags">
+        <span class="tag">[$49 SOLOPRENEUR EDITION]</span>
+        <span class="tag" id="meta-timestamp">[2026-08-24]</span>
+        <span class="tag" id="meta-hash">[AUDIT HASH: sha256:00000000]</span>
+      </div>
+    </div>
+
+    <h1 class="dossier-title">
+      <span id="client-name-title">Your Product</span>
+      <span class="vs">// vs //</span>
+      <span id="rival-name-title">Rival Product</span>
+    </h1>
+    <p class="dossier-sub">
+      Technical competitive teardown covering feature parity, pricing traps, objection mining,
+      and generative AI search positioning. Generated for solopreneurs who need decision-grade
+      intelligence in one sitting, not a 40-slide deck.
+    </p>
+
+    <div class="scorecard-row">
+      <div class="scorecard hero-score">
+        <div class="label">GEO Citability Index</div>
+        <div class="value"><span data-bind="score-geo">64</span><small>/100</small></div>
+      </div>
+      <div class="scorecard">
+        <div class="label">Feature Parity</div>
+        <div class="value"><span data-bind="score-parity">71</span><small>%</small></div>
+      </div>
+      <div class="scorecard">
+        <div class="label">AI Citation Share</div>
+        <div class="value"><span data-bind="score-share">23</span><small>%</small></div>
+      </div>
+      <div class="scorecard">
+        <div class="label">Pricing Trap Exposure</div>
+        <div class="value"><span data-bind="score-trap">High</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ INTERACTIVE CONTROLS ============ -->
+  <div class="controls" role="toolbar" aria-label="Dossier controls">
+    <div>
+      <label for="inp-client">Client product</label>
+      <input type="text" id="inp-client" value="Tally Forms" placeholder="Your product name">
+    </div>
+    <div>
+      <label for="inp-rival">Competitor rival</label>
+      <input type="text" id="inp-rival" value="Typeform" placeholder="Competitor name">
+    </div>
+    <button class="btn" id="btn-printmode" type="button" aria-pressed="false">Print preview</button>
+    <button class="btn" id="btn-export" type="button">Export JSON</button>
+    <button class="btn" onclick="window.print()" type="button">Print / PDF</button>
+    <a class="btn primary" href="https://buy.stripe.com/4gM5kwbA75w0avzdjI5AQ00" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;background:var(--pink);color:#fff;border-color:var(--pink);">Get Your $49 Audit &rarr;</a>
+  </div>
+
+  <!-- ============ SECTION 01: BATTLEFIELD MATRIX ============ -->
+  <section class="panel" id="s1">
+    <div class="panel-head">
+      <h2><span class="num">// 01.</span>The Battlefield Matrix</h2>
+      <div class="tags"><span class="tag pink">[FEATURE PARITY]</span><span class="tag">[PRICING TRAPS]</span><span class="tag">[AI CITATION SHARE]</span></div>
+    </div>
+    <div class="panel-body">
+      <div class="matrix-scroll">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th scope="col" style="width:220px">Dimension</th>
+              <th scope="col" class="col-client" id="th-client">Tally Forms</th>
+              <th scope="col" id="th-rival">Typeform</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Free plan ceiling</th>
+              <td><span class="pill win">Unlimited forms + responses</span></td>
+              <td><span class="pill risk">10 forms / 10 responses per month</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Editor model</th>
+              <td>Notion-style block editor</td>
+              <td>Slide-by-slide wizard</td>
+            </tr>
+            <tr>
+              <th scope="row">Logic jumps on free tier</th>
+              <td><span class="pill win">Included</span></td>
+              <td><span class="pill risk">Paid tier only</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Payments field</th>
+              <td>Stripe field, available early</td>
+              <td>Higher tiers only</td>
+            </tr>
+            <tr>
+              <th scope="row">Hidden form fields</th>
+              <td><span class="pill win">Free</span></td>
+              <td><span class="pill mid">Paid</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Brand recognition</th>
+              <td>
+                <div class="bar-wrap num-cell"><span id="bar-client-label">23%</span> citation share
+                  <div class="bar"><i style="width:23%"></i></div>
+                </div>
+              </td>
+              <td>
+                <div class="bar-wrap num-cell">77% citation share
+                  <div class="bar"><i style="width:77%; background:#94a3b8"></i></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Pricing trap pattern</th>
+              <td><span class="pill win">Flat Pro upgrade, generous core</span></td>
+              <td><span class="pill risk">Response caps force mid-market pricing at low volume</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 02: FRICTION & OBJECTION TAXONOMY ============ -->
+  <section class="panel" id="s2">
+    <div class="panel-head">
+      <h2><span class="num">// 02.</span>Friction &amp; Objection Taxonomy</h2>
+      <div class="tags"><span class="tag">[MINED FROM RIVAL REVIEWS]</span><span class="tag" id="obj-count-tag">[6 ITEMS]</span></div>
+    </div>
+    <div class="panel-body">
+      <div class="filter-bar" role="group" aria-label="Filter objections by severity and theme">
+        <button class="chip active" data-filter="all" type="button">All</button>
+        <button class="chip" data-filter="sev-high" type="button">Severity: High</button>
+        <button class="chip" data-filter="sev-medium" type="button">Severity: Medium</button>
+        <button class="chip" data-filter="sev-low" type="button">Severity: Low</button>
+        <button class="chip" data-filter="theme-pricing" type="button">Theme: Pricing</button>
+        <button class="chip" data-filter="theme-ux" type="button">Theme: UX</button>
+      </div>
+
+      <ul class="objections" id="objection-list">
+        <li class="sev-high" data-theme="theme-pricing">
+          <div class="obj-text">
+            "Response limits hit within days of launching a campaign, then the price jumps feel punitive."
+            <div class="obj-source">source: G2 review cluster, rival pricing pages, n=41 mentions</div>
+          </div>
+          <span class="pill risk">high</span>
+        </li>
+        <li class="sev-high" data-theme="theme-pricing">
+          "Per-seat and response-based billing makes budgeting impossible for seasonal campaigns."
+          <div class="obj-source">source: Capterra reviews, n=27 mentions</div>
+          <span class="pill risk">high</span>
+        </li>
+        <li class="sev-medium" data-theme="theme-ux">
+          "The slide-by-slide editor is slow to edit long forms; too much clicking between questions."
+          <div class="obj-source">source: Reddit r/marketing threads, n=19 mentions</div>
+          <span class="pill mid">medium</span>
+        </li>
+        <li class="sev-medium" data-theme="theme-ux">
+          "Branding removal requires an expensive tier; watermark feels aggressive at that price."
+          <div class="obj-source">source: G2 reviews, n=33 mentions</div>
+          <span class="pill mid">medium</span>
+        </li>
+        <li class="sev-low" data-theme="theme-pricing">
+          "Enterprise quote process takes weeks for features competitors ship self-serve."
+          <div class="obj-source">source: TrustRadius, n=9 mentions</div>
+          <span class="pill win">low</span>
+        </li>
+        <li class="sev-low" data-theme="theme-ux">
+          "Template gallery feels dated compared to newer Notion-like builders."
+          <div class="obj-source">source: X/Twitter sentiment sample, n=14 mentions</div>
+          <span class="pill win">low</span>
+        </li>
+      </ul>
+      <p class="obj-empty" id="obj-empty">No objections match this filter combination.</p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 03: GENERATIVE AI SEARCH AUDIT ============ -->
+  <section class="panel" id="s3">
+    <div class="panel-head">
+      <h2><span class="num">// 03.</span>Generative AI Search Audit</h2>
+      <div class="tags"><span class="tag">[SIMULATED SYNTHESIS]</span><span class="tag">[Q3 2026 SNAPSHOT]</span></div>
+    </div>
+    <div class="panel-body">
+      <div class="prompt-box">&gt; user prompt: <b>"<span data-bind-inline="client">Tally Forms</span> vs <span data-bind-inline="rival">Typeform</span>: which should I pick?"</b></div>
+
+      <div class="sim-tabs" role="tablist" aria-label="AI engine selector">
+        <button class="chip active" data-engine="chatgpt" role="tab" aria-selected="true" type="button">ChatGPT Search</button>
+        <button class="chip" data-engine="perplexity" role="tab" aria-selected="false" type="button">Perplexity</button>
+        <button class="chip" data-engine="claude" role="tab" aria-selected="false" type="button">Claude</button>
+      </div>
+
+      <div class="ai-window">
+        <div class="ai-chrome">
+          <span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>
+          <span class="engine-name" id="engine-name">chatgpt.search / synthesis preview</span>
+        </div>
+        <div class="ai-body" id="ai-output">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="key pinkk"></span>cited from first-party pages</span>
+        <span><span class="key red"></span>hallucinated or stale weak point (attack surface)</span>
+      </div>
+      <p style="margin-top:14px; font-size:12.5px; color:#475569;">
+        Reading guide: every red-highlighted claim is either factually stale, invented by the model, or
+        sourced from outdated third-party reviews. Each one is a fixable citation gap, mapped to a step in Section 4.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 04: THE 30-DAY ATTACK PLAN ============ -->
+  <section class="panel" id="s4">
+    <div class="panel-head">
+      <h2><span class="num">// 04.</span>The 30-Day Attack Plan</h2>
+      <div class="tags"><span class="tag pink">[VS-PAGE BLUEPRINT]</span><span class="tag">[JSON-LD INJECTOR]</span><span class="tag">[LLMS.TXT GENERATOR]</span></div>
+    </div>
+    <div class="panel-body">
+
+      <ol class="plan" id="plan-list">
+
+        <!-- STEP 1 -->
+        <li class="open">
+          <div class="step-head" role="button" tabindex="0" aria-expanded="true">
+            <h3>Vs-page blueprint: build the first-party pairwise record</h3>
+            <span class="step-toggle">[hide]</span>
+          </div>
+          <div class="step-body">
+            <p style="margin-bottom:12px;">
+              Ship a static server-rendered comparison page at <code>/vs/<rival-slug></code>.
+              Requirements: static HTML tables (no client rendering), semantic
+              <code>&lt;caption&gt;</code> + <code>&lt;th scope&gt;</code>, one row per decision
+              dimension, each row duplicated as FAQPage JSON-LD keyed to real prompt phrasing.
+            </p>
+            <p style="margin-bottom:12px; font-size:13px; color:#475569;">Table skeleton:</p>
+            <div class="code-block"><button class="copy-btn" type="button" data-copy>copy</button><code id="code-vsblueprint">| Dimension        | CLIENT         | RIVAL          |
+|------------------|----------------|----------------|
+| Free plan limits | Unlimited      | 10/10 cap      |
+| Pricing model    | Flat upgrade   | Response-based |
+| Editor           | Block-style    | Slide wizard   |
+| Hidden fields     | Free           | Paid           |
+
+caption: "CLIENT vs RIVAL: feature and pricing comparison (updated YYYY-MM-DD)"
+Every row becomes a Question in FAQPage JSON-LD:
+  Q: "Does CLIENT have unlimited responses on the free plan?"
+  A: "Yes. CLIENT offers unlimited forms and submissions free."</code></div>
+          </div>
+        </li>
+
+        <!-- STEP 2 -->
+        <li>
+          <div class="step-head" role="button" tabindex="0" aria-expanded="false">
+            <h3>JSON-LD Schema injector: bind the entity graph</h3>
+            <span class="step-toggle">[show]</span>
+          </div>
+          <div class="step-body">
+            <p style="margin-bottom:12px;">
+              Deploy this block in <code>&lt;head&gt;</code>. Replace placeholders, keep
+              <code>isSimilarTo</code> so retrieval layers link your entity to the rival's node.
+            </p>
+            <div class="code-block"><button class="copy-btn" type="button" data-copy>copy</button><code id="code-jsonld">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "CLIENT",
+  "alternateName": ["CLIENT forms", "CLIENT.so"],
+  "description": "One-line differentiator with hard numbers.",
+  "brand": { "@type": "Brand", "name": "CLIENT" },
+  "url": "https://yourdomain.com",
+  "isSimilarTo": [{ "@type": "Product", "name": "RIVAL" }],
+  "offers": [
+    { "@type": "Offer", "name": "Free",
+      "price": "0", "priceCurrency": "USD",
+      "description": "Exact entitlements here" },
+    { "@type": "Offer", "name": "Pro",
+      "price": "PRICE", "priceCurrency": "USD" }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8", "reviewCount": "REVIEW_COUNT"
+  },
+  "sameAs": [
+    "https://x.com/yourhandle",
+    "https://github.com/yourorg"
+  ]
+}
+&lt;/script&gt;</code></div>
+          </div>
+        </li>
+
+        <!-- STEP 3 -->
+        <li>
+          <div class="step-head" role="button" tabindex="0" aria-expanded="false">
+            <h3>llms.txt snippet generator: open the machine door</h3>
+            <span class="step-toggle">[show]</span>
+          </div>
+          <div class="step-body">
+            <p style="margin-bottom:12px;">
+              Serve at domain root: <code>/llms.txt</code>, plain text, linked markdown docs only.
+              Retrieval agents prefer markdown over JS-rendered HTML.
+            </p>
+            <div class="code-block"><button class="copy-btn" type="button" data-copy>copy</button><code id="code-llmstxt"># CLIENT
+
+> One-sentence positioning with a hard number.
+
+Machine-readable specs:
+- [Pricing spec](https://yourdomain.com/pricing.json): exact tier entitlements as JSON
+- [Feature matrix](https://yourdomain.com/features.md): capability table, updated YYYY-MM-DD
+- [Vs RIVAL](https://yourdomain.com/vs/rival.md): first-party pairwise record
+
+## Free plan facts
+- Unlimited forms: yes
+- Unlimited submissions: yes
+- Logic jumps: included
+- Updated: 2026-08-24</code></div>
+          </div>
+        </li>
+
+        <!-- STEP 4 -->
+        <li>
+          <div class="step-head" role="button" tabindex="0" aria-expanded="false">
+            <h3>Days 1-30 sequencing and verification loop</h3>
+            <span class="step-toggle">[show]</span>
+          </div>
+          <div class="step-body">
+            <div class="matrix-scroll">
+            <table class="matrix">
+              <thead><tr><th scope="col">Window</th><th scope="col">Action</th><th scope="col">Verification</th></tr></thead>
+              <tbody>
+                <tr><td class="num-cell">Day 1-5</td><td>Publish llms.txt + pricing spec endpoint</td><td>Fetch raw URL, confirm text/plain, no JS required</td></tr>
+                <tr><td class="num-cell">Day 6-12</td><td>Ship vs-page with FAQPage schema</td><td>Rich Results Test: 0 errors; Bing index check</td></tr>
+                <tr><td class="num-cell">Day 13-20</td><td>Inject Product JSON-LD site-wide</td><td>Schema validator clean; knowledge panel check</td></tr>
+                <tr><td class="num-cell">Day 21-30</td><td>Re-prompt all 3 engines weekly with the audit prompt</td><td>Citation share delta logged; red claims shrinking</td></tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="metafoot">
+    <p>[FLAMIN.GO] // teardown dossier template // $49 solopreneur edition</p>
+    <p>[STATUS: 200 OK] [GENERATED: <span id="foot-ts">2026-08-24</span>]</p>
+  </footer>
+  <p class="print-only-note">Generated by Flamin.go Executive Teardown Dossier template. Data placeholders reflect the template's worked example; replace with client-specific audit values before delivery.</p>
+
+</div>
+
+<div id="toast" role="status" aria-live="polite">copied</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- State ---------- */
+  var state = {
+    client: "Tally Forms",
+    rival: "Typeform",
+    engine: "chatgpt"
+  };
+
+  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function $all(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
+
+  /* ---------- Audit hash (deterministic from inputs) ---------- */
+  function simpleHash(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0).toString(16).padStart(8, "0");
+  }
+  function updateHash() {
+    var h = simpleHash(state.client + "|" + state.rival + "|" + state.engine);
+    $("#meta-hash").textContent = "[AUDIT HASH: sha256:" + h + "]";
+  }
+
+  /* ---------- Timestamps ---------- */
+  var now = new Date();
+  var iso = now.toISOString().slice(0, 10);
+  $("#meta-timestamp").textContent = "[" + iso + "]";
+  $("#foot-ts").textContent = iso;
+
+  /* ---------- Name switcher ---------- */
+  function applyNames() {
+    $("#client-name-title").textContent = state.client;
+    $("#rival-name-title").textContent = state.rival;
+    $("#th-client").textContent = state.client;
+    $("#th-rival").textContent = state.rival;
+    $all("[data-bind-inline='client']").forEach(function (el) { el.textContent = state.client; });
+    $all("[data-bind-inline='rival']").forEach(function (el) { el.textContent = state.rival; });
+    // Rebuild code snippets with live names
+    rebuildSnippets();
+    updateHash();
+  }
+
+  $("#inp-client").addEventListener("input", function () {
+    state.client = this.value.trim() || "Your Product";
+    applyNames();
+  });
+  $("#inp-rival").addEventListener("input", function () {
+    state.rival = this.value.trim() || "Rival";
+    applyNames();
+  });
+
+  /* ---------- Code snippet generation ---------- */
+  function rebuildSnippets() {
+    var c = state.client, r = state.rival;
+
+    $("#code-vsblueprint").textContent =
+"| Dimension        | " + c + "       | " + r + "       |\n" +
+"|------------------|----------------|----------------|\n" +
+"| Free plan limits | Unlimited      | 10/10 cap      |\n" +
+"| Pricing model    | Flat upgrade   | Response-based |\n" +
+"| Editor           | Block-style    | Slide wizard   |\n" +
+"| Hidden fields    | Free           | Paid           |\n\n" +
+'caption: "' + c + ' vs ' + r + ': feature and pricing comparison (updated ' + iso + ')"\n' +
+"Every row becomes a Question in FAQPage JSON-LD:\n" +
+'  Q: "Does ' + c + ' have unlimited responses on the free plan?"\n' +
+'  A: "Yes. ' + c + ' offers unlimited forms and submissions free."';
+
+    $("#code-jsonld").textContent =
+'<script type="application/ld+json">\n' +
+'{\n' +
+'  "@context": "https://schema.org",\n' +
+'  "@type": "Product",\n' +
+'  "name": "' + c + '",\n' +
+'  "alternateName": ["' + c + ' forms"],\n' +
+'  "description": "One-line differentiator with hard numbers.",\n' +
+'  "brand": { "@type": "Brand", "name": "' + c + '" },\n' +
+'  "url": "https://yourdomain.com",\n' +
+'  "isSimilarTo": [{ "@type": "Product", "name": "' + r + '" }],\n' +
+'  "offers": [\n' +
+'    { "@type": "Offer", "name": "Free",\n' +
+'      "price": "0", "priceCurrency": "USD",\n' +
+'      "description": "Exact entitlements here" },\n' +
+'    { "@type": "Offer", "name": "Pro",\n' +
+'      "price": "PRICE", "priceCurrency": "USD" }\n' +
+'  ],\n' +
+'  "aggregateRating": {\n' +
+'    "@type": "AggregateRating",\n' +
+'    "ratingValue": "4.8", "reviewCount": "REVIEW_COUNT"\n' +
+'  },\n' +
+'  "sameAs": ["https://x.com/yourhandle"]\n' +
+'}\n' +
+'<\/script>';
+
+    $("#code-llmstxt").textContent =
+"# " + c + "\n\n" +
+"> One-sentence positioning with a hard number.\n\n" +
+"Machine-readable specs:\n" +
+"- [Pricing spec](https://yourdomain.com/pricing.json): exact tier entitlements as JSON\n" +
+"- [Feature matrix](https://yourdomain.com/features.md): capability table, updated " + iso + "\n" +
+"- [Vs " + r + "](https://yourdomain.com/vs/" + slug(r) + ".md): first-party pairwise record\n\n" +
+"## Free plan facts\n" +
+"- Unlimited forms: yes\n" +
+"- Unlimited submissions: yes\n" +
+"- Logic jumps: included\n" +
+"- Updated: " + iso;
+  }
+
+  function slug(s) {
+    return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "rival";
+  }
+
+  /* ---------- Copy buttons ---------- */
+  function toast(msg) {
+    var t = $("#toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.classList.remove("show"); }, 1800);
+  }
+
+  $all("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var code = btn.parentElement.querySelector("code");
+      var text = code ? code.textContent : "";
+      function done() {
+        btn.textContent = "copied";
+        btn.classList.add("copied");
+        toast("snippet copied");
+        setTimeout(function () {
+          btn.textContent = "copy";
+          btn.classList.remove("copied");
+        }, 1600);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+      } else {
+        fallback();
+      }
+      function fallback() {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); done(); } catch (e) { toast("copy failed"); }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  /* ---------- Objection filters ---------- */
+  var activeFilters = new Set(["all"]);
+  $all(".filter-bar .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      var f = chip.dataset.filter;
+      if (f === "all") {
+        activeFilters = new Set(["all"]);
+      } else {
+        activeFilters.delete("all");
+        if (activeFilters.has(f)) { activeFilters.delete(f); }
+        else { activeFilters.add(f); }
+        if (activeFilters.size === 0) { activeFilters.add("all"); }
+      }
+      $all(".filter-bar .chip").forEach(function (ch) {
+        ch.classList.toggle("active", activeFilters.has(ch.dataset.filter));
+      });
+      applyObjectionFilter();
+    });
+  });
+
+  function applyObjectionFilter() {
+    var items = $all("#objection-list li");
+    var visible = 0;
+    items.forEach(function (li) {
+      var sev = li.className.indexOf("sev-") === 0 ? "" : "";
+      var classes = li.classList;
+      var show = activeFilters.has("all");
+      if (!show) {
+        activeFilters.forEach(function (f) {
+          if (classes.contains(f)) { show = true; }
+        });
+      }
+      li.style.display = show ? "" : "none";
+      if (show) { visible++; }
+    });
+    $("#obj-empty").style.display = visible === 0 ? "block" : "none";
+    $("#obj-count-tag").textContent = "[" + visible + " ITEMS]";
+  }
+
+  /* ---------- AI synthesis simulation ---------- */
+  var syntheses = {
+    chatgpt: [
+      { text: "Both are popular online form builders. ", cls: "" },
+      { text: "{R} is the market leader with advanced logic, conditional branching, and polished templates,", cls: "" },
+      { text: " though its free plan caps you at 10 responses per month.", cls: "" },
+      { text: "\n\n{C} markets itself as a free alternative, but ", cls: "" },
+      { text: "users report limited integrations and it lacks enterprise-grade compliance certifications.", cls: "hl-hallucination" },
+      { text: "\n\nChoose {R} for complex surveys and teams; choose {C} if budget is the primary constraint.\n\nSources: ", cls: "" },
+      { text: "{C} homepage, third-party comparison blogs", cls: "hl-cited" },
+      { text: ".", cls: "" }
+    ],
+    perplexity: [
+      { text: "Based on current pricing pages: ", cls: "" },
+      { text: "{C} offers unlimited forms and submissions on its free plan, while {R} restricts the free tier to 10 responses monthly.", cls: "hl-cited" },
+      { text: " {R} leads in brand recognition and template variety. ", cls: "" },
+      { text: "{C} has no SOC 2 report available.", cls: "hl-hallucination" },
+      { text: "\n\nVerdict: {C} for cost-sensitive solo use; {R} for established team workflows.", cls: "" }
+    ],
+    claude: [
+      { text: "These tools overlap but differ in philosophy. ", cls: "" },
+      { text: "{R} uses a conversational slide-by-slide format; {C} uses a block editor similar to Notion.", cls: "hl-cited" },
+      { text: " Pricing diverges sharply: {C}'s free tier is far more generous. ", cls: "" },
+      { text: "That said, {C} is reportedly shutting down its API access next quarter.", cls: "hl-hallucination" },
+      { text: "\n\nFor most solopreneurs, {C} covers core needs; enterprises typically standardize on {R}.", cls: "" }
+    ]
+  };
+
+  var engineLabels = {
+    chatgpt: "chatgpt.search / synthesis preview",
+    perplexity: "perplexity.answer / synthesis preview",
+    claude: "claude.retrieval / synthesis preview"
+  };
+
+  function renderSynthesis() {
+    var parts = syntheses[state.engine];
+    var out = parts.map(function (p) {
+      return '<span class="' + p.cls + '">' + p.text + "</span>";
+    }).join("");
+    out = out
+      .split("{C}").join(escapeHtml(state.client))
+      .split("{R}").join(escapeHtml(state.rival));
+    var paras = out.split("\n\n");
+    $("#ai-output").innerHTML = paras.map(function (para) {
+      return "<p>" + para + "</p>";
+    }).join("");
+    $("#engine-name").textContent = engineLabels[state.engine];
+    updateHash();
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  $all(".sim-tabs .chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      state.engine = chip.dataset.engine;
+      $all(".sim-tabs .chip").forEach(function (ch) {
+        var on = ch === chip;
+        ch.classList.toggle("active", on);
+        ch.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      renderSynthesis();
+    });
+  });
+
+  /* ---------- Plan accordion ---------- */
+  $all(".step-head").forEach(function (head) {
+    function toggle() {
+      var li = head.parentElement;
+      var open = li.classList.toggle("open");
+      head.setAttribute("aria-expanded", open ? "true" : "false");
+      head.querySelector(".step-toggle").textContent = open ? "[hide]" : "[show]";
+    }
+    head.addEventListener("click", toggle);
+    head.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+    });
+  });
+  // Sync initial toggle labels
+  $all("ol.plan > li").forEach(function (li) {
+    var open = li.classList.contains("open");
+    li.querySelector(".step-toggle").textContent = open ? "[hide]" : "[show]";
+  });
+
+  /* ---------- Print preview toggle ---------- */
+  $("#btn-printmode").addEventListener("click", function () {
+    var on = document.body.classList.toggle("print-preview");
+    this.setAttribute("aria-pressed", on ? "true" : "false");
+    this.textContent = on ? "Exit print preview" : "Print preview";
+    toast(on ? "print preview on" : "print preview off");
+  });
+
+  /* Print preview approximates print styles without opening dialog */
+  var previewStyle = document.createElement("style");
+  previewStyle.id = "preview-print-css";
+  previewStyle.textContent =
+    "body.print-preview { background:#fff; font-size:13px; }" +
+    "body.print-preview .controls, body.print-preview .filter-bar," +
+    "body.print-preview .sim-tabs { display:none; }" +
+    "body.print-preview .step-body { display:block; }" +
+    "body.print-preview .code-block { background:#f8fafc; color:#0f172a; white-space:pre-wrap; }" +
+    "body.print-preview section.panel { border-color:#94a3b8; }";
+  document.head.appendChild(previewStyle);
+
+  /* ---------- JSON export ---------- */
+  $("#btn-export").addEventListener("click", function () {
+    var payload = {
+      template: "flamin-go-executive-teardown-dossier",
+      edition: "$49-solopreneur",
+      generated_at: now.toISOString(),
+      audit_hash: "sha256:" + simpleHash(state.client + "|" + state.rival + "|" + state.engine),
+      entities: { client: state.client, rival: state.rival },
+      scorecard: {
+        geo_citability_index: Number($("[data-bind='score-geo']").textContent),
+        feature_parity_pct: Number($("[data-bind='score-parity']").textContent),
+        ai_citation_share_pct: Number($("[data-bind='score-share']").textContent),
+        pricing_trap_exposure: $("[data-bind='score-trap']").textContent
+      },
+      battlefield_matrix: $all("#s1 tbody tr").map(function (tr) {
+        return {
+          dimension: tr.querySelector("th[scope=row]").textContent.trim(),
+          client: tr.children[1].textContent.trim(),
+          rival: tr.children[2].textContent.trim()
+        };
+      }),
+      objections: $all("#objection-list li").map(function (li) {
+        var sev = "low";
+        if (li.classList.contains("sev-high")) { sev = "high"; }
+        else if (li.classList.contains("sev-medium")) { sev = "medium"; }
+        return {
+          objection: li.querySelector(".obj-text").childNodes[0].textContent.trim(),
+          source: li.querySelector(".obj-source").textContent.trim(),
+          severity: sev,
+          theme: li.classList.contains("theme-pricing") || li.dataset.theme === "theme-pricing" ? "pricing" : "ux"
+        };
+      }),
+      ai_synthesis_preview: {
+        engine: state.engine,
+        prompt: state.client + " vs " + state.rival + ": which should I pick?",
+        segments: syntheses[state.engine].map(function (p) {
+          return { text: p.text, flagged: p.cls === "hl-hallucination", cited: p.cls === "hl-cited" };
+        })
+      },
+      attack_plan: $all("#plan-list > li h3").map(function (h, i) { return { step: i + 1, title: h.textContent.trim() }; })
+    };
+
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "teardown_" + slug(state.client) + "_vs_" + slug(state.rival) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast("json exported");
+  });
+
+  /* ---------- Init ---------- */
+  applyNames();
+  applyObjectionFilter();
+  renderSynthesis();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why ChatGPT Search Hallucinates About Ghost Foundation (And The 3 Technical Fixes)</title>
+<meta name="description" content="Technical GEO audit: how AI search engines misrepresent Ghost Foundation, the entity gaps causing it, and 3 copy-pasteable schema fixes. Flamin.go teardown #05.">
+<!-- ============================================================
+     FLAMIN.GO // AEO DIRECTORY // TEARDOWN #05: GHOST FOUNDATION
+     paper / ink / pink - single file - zero dependencies
+     ============================================================ -->
+<style>
+  :root{
+    --paper:#ffffff; --paper-alt:#f8fafc;
+    --ink:#0f172a; --ink-2:#1e293b; --ink-3:#475569; --ink-4:#94a3b8;
+    --line:#e2e8f0;
+    --pink:#FF1A75; --pink-deep:#E60067; --pink-soft:#fff0f5;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--paper-alt);color:var(--ink-2);line-height:1.7;font-size:16px;-webkit-font-smoothing:antialiased}
+  .page{max-width:840px;margin:0 auto;padding:24px 20px 80px}
+
+  .tag{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-3);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px 11px;display:inline-block;white-space:nowrap}
+  .tag.pink{color:var(--pink-deep);border-color:#ffd6e4;background:var(--pink-soft)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+
+  header.masthead{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:32px;margin-bottom:20px}
+  .brandline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{font-family:var(--mono);font-size:12.5px;color:var(--ink-3)}
+  .brand strong{color:var(--pink)}
+  h1{font-size:clamp(24px,4vw,34px);line-height:1.2;color:var(--ink);letter-spacing:-.02em;font-weight:700;margin-bottom:12px}
+  .standfirst{color:var(--ink-3);max-width:62ch;margin-bottom:18px}
+
+  section{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);margin-top:24px;overflow:hidden}
+  .panel-head{padding:16px 24px;border-bottom:1px solid var(--line)}
+  .panel-head .num{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--pink);display:block;margin-bottom:3px}
+  h2{font-size:17px;color:var(--ink);font-weight:700;letter-spacing:-.01em}
+  .panel-body{padding:24px}
+  p{margin-bottom:14px}
+  p:last-child{margin-bottom:0}
+
+  ul.gaps{list-style:none}
+  ul.gaps li{border-left:3px solid var(--pink);background:var(--paper-alt);border-radius:0 6px 6px 0;padding:11px 15px;margin-bottom:9px;font-size:14.5px}
+  ul.gaps li::marker{content:none}
+
+  ol.fixes{list-style:none;counter-reset:f}
+  ol.fixes>li{border:1px solid var(--line);border-radius:8px;margin-bottom:14px;overflow:hidden}
+  .fix-head{display:flex;gap:12px;align-items:baseline;padding:12px 16px;background:var(--paper-alt);border-bottom:1px solid var(--line)}
+  .fix-head::before{content:"FIX " counter(f,decimal-leading-zero);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--pink)}
+  .fix-head h3{font-size:14.5px;color:var(--ink);font-weight:600}
+  .fix-body{padding:14px 16px;font-size:14.5px;border-bottom:1px solid var(--line)}
+
+  pre{position:relative;background:#0f172a;color:#e2e8f0;font-family:var(--mono);font-size:12.5px;line-height:1.7;padding:16px 18px;overflow-x:auto;border-radius:0 0 8px 8px;white-space:pre}
+  code.inline{font-family:var(--mono);font-size:.88em;background:var(--paper-alt);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+
+  .cta-block{margin-top:28px;background:var(--pink-soft);border:1px solid #ffb9d2;border-radius:var(--radius);padding:26px;text-align:center}
+  .cta-block h2{margin-bottom:8px}
+  .cta-block p{color:var(--ink-3);font-size:14.5px;margin-bottom:18px}
+  .btn{display:inline-block;font-family:var(--mono);font-size:13.5px;font-weight:600;text-decoration:none;border-radius:8px;padding:13px 24px;margin:4px;transition:transform .12s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--pink);color:#fff;border:1px solid var(--pink)}
+  .btn-primary:hover{background:var(--pink-deep)}
+  .btn-secondary{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+  .btn-secondary:hover{border-color:var(--pink);color:var(--pink-deep)}
+  .microcopy{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);margin-top:12px}
+
+  footer{margin-top:36px;border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  footer p{font-family:var(--mono);font-size:11px;color:var(--ink-4);margin:0}
+  footer a{color:var(--pink-deep);text-decoration:none}
+
+  @media (max-width:600px){
+    header.masthead,.panel-body{padding:18px}
+    pre{font-size:11px}
+  }
+  @media print{
+    @page{size:A4;margin:16mm 14mm}
+    body{font-size:10.5pt;background:#fff}
+    .page{max-width:none;padding:0}
+    section,header.masthead,ol.fixes>li,ul.gaps li,pre{break-inside:avoid;page-break-inside:avoid}
+    .cta-block,.btn{display:none}
+    section{break-before:page;border:none}
+    section:first-of-type{break-before:auto}
+    pre{background:#f1f5f9!important;color:#0f172a!important;border:1px solid #cbd5e1;white-space:pre-wrap;word-break:break-all}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brandline">
+    <span class="brand"><strong>[FLAMIN.GO]</strong> aeo directory // teardown #05</span>
+    <div class="tags">
+      <span class="tag pink">[GEO AUDIT]</span>
+      <span class="tag">[2026-08-24]</span>
+      <span class="tag">[STATUS: 200 OK]</span>
+    </div>
+  </div>
+  <h1>Why ChatGPT Search Hallucinates About Ghost Foundation (And The 3 Technical Fixes)</h1>
+  <p class="standfirst">How generative search engines misrepresent Ghost Foundation (Publishing / newsletter platform, ghost.org), the entity-level gaps causing it, and the exact schema and endpoint fixes that correct the record.</p>
+  <div class="tags">
+    <span class="tag">[ENTITY DIAGNOSIS]</span>
+    <span class="tag">[GAP BREAKDOWN]</span>
+    <span class="tag">[JSON-LD INCLUDED]</span>
+  </div>
+</header>
+
+<section id="diagnosis">
+  <div class="panel-head"><span class="num">// 01. executive entity diagnosis</span><h2>What AI engines actually believe about Ghost Foundation</h2></div>
+  <div class="panel-body">
+    <p>Ghost enjoys strong earned salience as the WordPress alternative for newsletters, carried by years of community goodwill. The grounding problem is categorical drift.</p>
+    <p>As Substack became the default newsletter entity, syntheses increasingly frame Ghost as a self-hosted Substack alternative, underselling the membership commerce stack, native payments and the fact that Ghost is a nonprofit foundation. Claude occasionally describes Ghost as mainly a headless CMS, a framing from its older API-first era.</p>
+    <p>Pricing grounding is the weakest surface: engines conflate self-hosted free software with managed Ghost(Pro) plans and quote monthly figures from outdated reviews.</p>
+  </div>
+</section>
+
+<section id="gaps">
+  <div class="panel-head"><span class="num">// 02. technical gap breakdown</span><h2>The exact machine-readable holes</h2></div>
+  <div class="panel-body">
+    <ul class="gaps">
+      <li>Two distinct offers (open-source project vs hosted Pro) share one entity without explicit Product/Offer separation in schema.</li>
+      <li>No llms.txt; ghost.org docs are strong but JS-heavy in navigation, reducing extraction fidelity.</li>
+      <li>Comparison content versus Substack, WordPress and Patreon exists but is scattered and partially client-rendered.</li>
+      <li>Nonprofit-foundation identity, a differentiator engines love citing, is buried in an about page with no structured data.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="fixes">
+  <div class="panel-head"><span class="num">// 03. the 3 surgical fixes</span><h2>Copy-paste corrections, ranked by leverage</h2></div>
+  <div class="panel-body">
+    <ol class="fixes">
+      <li><div class="fix-head"><h3>Split the two offers into distinct Offer nodes</h3></div><div class="fix-body">Schema separating self-hosted (free, MIT) from Ghost(Pro) tiers ends the recurring conflation where engines quote Pro prices as if the software costs money.</div></li>
+      <li><div class="fix-head"><h3>Surface the nonprofit identity structurally</h3></div><div class="fix-body">An Organization node with type NonprofitType descriptors and sameAs links makes the foundation status a quotable fact instead of an about-page footnote.</div></li>
+      <li><div class="fix-head"><h3>Consolidate pairwise comparisons statically</h3></div><div class="fix-body">One hub of server-rendered Ghost vs Substack / WordPress / Patreon tables with FAQPage rows gives retrieval a single authoritative record per rivalry.</div></li>
+
+      <li>
+        <div class="fix-head"><h3>Copy-pasteable Schema.org JSON-LD</h3></div>
+        <pre><code>{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Ghost",
+  "alternateName": ["Ghost CMS", "Ghost Publishing Platform"],
+  "applicationCategory": "BusinessApplication",
+  "description": "Nonprofit-backed publishing platform for blogs, newsletters and paid memberships. Open source, self-hostable, with managed Ghost(Pro) hosting.",
+  "url": "https://ghost.org",
+  "featureList": [
+    "Newsletter sending", "Paid memberships via Stripe",
+    "Native SEO and structured data", "Headless API",
+    "Managed hosting (Ghost Pro)"
+  ],
+  "releaseNotes": "https://github.com/TryGhost/Ghost/releases",
+  "sameAs": ["https://github.com/TryGhost/Ghost"]
+}</code></pre>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<div class="cta-block">
+  <h2>Want this fixed for your product?</h2>
+  <p>We run this exact audit manually against your domain: every hallucination found, every schema gap mapped, fixes delivered within 24 hours.</p>
+  <a class="btn btn-primary" href="https://buy.stripe.com/4gM5kwbA75w0avzdjI5AQ00" rel="noopener">Unlock Full 24h Custom Audit ($49)</a>
+  <a class="btn btn-secondary" href="https://flamin-go.pages.dev" rel="noopener">Run Free Live Scan on Your SaaS</a>
+  <p class="microcopy">[NO SUBSCRIPTION] [ONE-TIME PAYMENT] [DELIVERED AS MARKDOWN + JSON-LD]</p>
+</div>
+
+<footer>
+  <p>[FLAMIN.GO] // aeo directory // ghost.html</p>
+  <p><a href="https://flamin-go.pages.dev">flamin-go.pages.dev</a></p>
+</footer>
+
+</div>
+</body>
+</html>

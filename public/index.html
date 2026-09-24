@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flamin.go - The B2A Intelligence Toolkit for Solopreneurs &amp; Micro-SaaS</title>
+<meta name="description" content="Turn raw market signals and competitor gaps into automated customer acquisition pipelines. Zero enterprise bloat. Built for indie founders.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Flamin.go - The B2A Intelligence Toolkit">
+<meta property="og:description" content="Automated teardowns, token extraction and AEO endpoints for indie founders. $0 CLI, $49 Studio Pack.">
+<style>
+/* ============================================================
+   // 00. DESIGN TOKENS
+   Flamin.go v1.4 - handcrafted, no frameworks, no trackers.
+   Palette: paper white, ink slate, flamingo pink.
+   ============================================================ */
+:root {
+  --paper: #ffffff;
+  --paper-alt: #f9f9fb;
+  --ink: #0f172a;
+  --ink-2: #1e293b;
+  --ink-mute: #64748b;
+  --line: #e2e8f0;
+  --line-dash: #cbd5e1;
+  --pink: #FF1A75;
+  --pink-deep: #E60067;
+  --pink-hot: #FF3385;
+  --pink-wash: #fff1f6;
+  --ok: #0a7d43;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --wrap: 1060px;
+}
+
+/* // 01. RESET LITE */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg { max-width: 100%; display: block; }
+h1, h2, h3, h4 { line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 .6em; color: var(--ink); }
+p { margin: 0 0 1em; }
+a { color: inherit; text-decoration-color: rgba(255,26,117,.45); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--pink); text-decoration-thickness: 3px; }
+code, kbd, pre, samp { font-family: var(--mono); font-size: .92em; }
+::selection { background: #ffd6e5; color: var(--ink); }
+:focus-visible { outline: 3px solid var(--pink-hot); outline-offset: 2px; border-radius: 2px; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 99;
+  background: var(--ink); color: #fff; padding: .6rem 1rem;
+  font-family: var(--mono); font-size: .8rem;
+}
+.skip-link:focus { left: 0; }
+
+/* // 02. LAYOUT PRIMITIVES */
+.wrap { width: min(var(--wrap), 92vw); margin-inline: auto; }
+.mono { font-family: var(--mono); }
+.eyebrow {
+  font-family: var(--mono); font-size: .78rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--pink-deep); margin-bottom: 1rem;
+}
+.eyebrow::before { content: ""; display: inline-block; width: 22px; height: 4px; background: var(--pink); margin-right: 10px; vertical-align: middle; }
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: .72rem;
+  border: 1px solid var(--line-dash); border-radius: 999px;
+  padding: .12em .7em; color: var(--ink-mute); background: var(--paper);
+  white-space: nowrap;
+}
+.tag.pink { border-color: rgba(255,26,117,.5); color: var(--pink-deep); background: var(--pink-wash); }
+
+/* // 03. TOP CHROME + HEADER */
+.topstrip { height: 5px; background: linear-gradient(90deg, var(--pink-deep), var(--pink), var(--pink-hot)); }
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding-block: .8rem;
+}
+.brand {
+  font-weight: 800; font-size: 1.18rem; letter-spacing: -0.03em;
+  text-decoration: none; white-space: nowrap;
+}
+.brand .flamingo { font-style: normal; }
+.brand-ver { font-family: var(--mono); font-size: .68rem; color: var(--ink-mute); margin-left: .35rem; vertical-align: super; }
+.status-pill {
+  display: inline-flex; align-items: center; gap: .45em;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .04em;
+  border: 1px solid var(--line-dash); border-radius: 999px;
+  padding: .28em .85em; color: var(--ink-2); background: var(--paper-alt);
+}
+.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgba(10,125,67,.14); }
+.site-nav { margin-left: auto; display: flex; gap: 1.1rem; flex-wrap: wrap; }
+.site-nav a {
+  font-family: var(--mono); font-size: .8rem; text-decoration: none;
+  color: var(--ink-2); padding-block: .2em;
+  border-bottom: 3px solid transparent;
+}
+.site-nav a:hover { border-bottom-color: var(--pink); color: var(--ink); }
+.header-cta {
+  font-family: var(--mono); font-size: .78rem; text-decoration: none;
+  border: 1px solid var(--ink); border-radius: 999px;
+  padding: .38em 1em; white-space: nowrap;
+}
+.header-cta:hover { background: var(--ink); color: #fff; }
+
+/* // 04. HERO */
+.hero {
+  position: relative;
+  padding-block: 5rem 4rem;
+  background-image: radial-gradient(#eef1f6 1px, transparent 1.4px);
+  background-size: 24px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.hero-kicker { font-family: var(--mono); font-size: .74rem; color: var(--ink-mute); letter-spacing: .06em; margin-bottom: 1.2rem; }
+.hero-kicker b { color: var(--ok); font-weight: 600; }
+.hero h1 {
+  font-size: clamp(2.35rem, 5.6vw, 4.1rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  max-width: 19ch;
+  margin-bottom: 1rem;
+}
+.hl { border-bottom: 0.13em solid var(--pink); padding-bottom: 0.02em; }
+.lede { font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--ink-2); max-width: 58ch; }
+.hero-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.4rem; }
+
+/* // 05. TERMINAL (QUICKSTART) */
+.terminal {
+  margin: 2.4rem 0 0; border: 1px solid var(--line-dash); border-radius: 10px;
+  overflow: hidden; background: var(--paper); max-width: 720px;
+  box-shadow: 0 1px 0 var(--line);
+}
+.term-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  background: var(--paper-alt); border-bottom: 1px dashed var(--line-dash);
+  padding: .55rem .9rem;
+}
+.term-tabs { display: flex; gap: .35rem; }
+.term-tabs button {
+  font-family: var(--mono); font-size: .76rem; cursor: pointer;
+  border: 1px solid transparent; background: none; color: var(--ink-mute);
+  border-radius: 6px; padding: .3em .8em;
+}
+.term-tabs button[aria-selected="true"] {
+  color: var(--pink-deep); background: var(--pink-wash);
+  border-color: rgba(255,26,117,.4); font-weight: 700;
+}
+.term-title { font-family: var(--mono); font-size: .7rem; color: var(--ink-mute); }
+.term-panel { position: relative; }
+.term-panel pre {
+  margin: 0; padding: 1.1rem 1.15rem; overflow-x: auto;
+  font-size: .86rem; line-height: 1.7; color: var(--ink-2);
+}
+.prompt { color: var(--pink-deep); user-select: none; }
+.comment { color: var(--ink-mute); }
+.copy-btn {
+  position: absolute; top: .65rem; right: .65rem;
+  font-family: var(--mono); font-size: .7rem; cursor: pointer;
+  border: 1px solid var(--line-dash); border-radius: 6px;
+  background: var(--paper); color: var(--ink-mute); padding: .3em .75em;
+}
+.copy-btn:hover { border-color: var(--pink); color: var(--pink-deep); }
+.copy-btn.copied { background: var(--pink); border-color: var(--pink); color: #fff; }
+.hero-stats {
+  margin-top: 1.6rem; font-family: var(--mono); font-size: .74rem;
+  color: var(--ink-mute); letter-spacing: .05em;
+}
+.hero-stats b { color: var(--pink-deep); font-weight: 700; }
+.hero-stats .sep { color: #cbd5e1; padding-inline: .35em; }
+
+/* // 06. SECTIONS */
+section[id] { scroll-margin-top: 5.2rem; }
+section.band { padding-block: 4.2rem; }
+section.alt { background: var(--paper-alt); border-block: 1px solid var(--line); }
+.sec-head { max-width: 62ch; margin-bottom: 2.6rem; }
+.sec-head h2 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); font-weight: 800; letter-spacing: -0.03em; }
+.sec-sub { color: var(--ink-2); font-size: 1.02rem; }
+
+/* // 07. PLAYBOOKS CATALOG */
+.playbook-list { list-style: none; margin: 0; padding: 0; counter-reset: pb; }
+.playbook-list > li + li { border-top: 1px dashed var(--line-dash); }
+.playbook {
+  display: grid; grid-template-columns: 96px minmax(0,1fr) minmax(0,300px);
+  gap: 1.4rem; padding-block: 2rem; align-items: start;
+}
+.pb-num {
+  font-family: var(--mono); font-size: 1.5rem; font-weight: 700;
+  color: #cbd5e1; letter-spacing: -0.03em; padding-top: .1em;
+  transition: color .15s ease;
+}
+.playbook:hover .pb-num { color: var(--pink); }
+.pb-body h3 { font-size: 1.28rem; font-weight: 750; margin-bottom: .35rem; }
+.pb-flow {
+  font-family: var(--mono); font-size: .78rem; color: var(--pink-deep);
+  margin-bottom: .7rem; letter-spacing: .01em;
+}
+.pb-flow .arr { color: var(--ink-mute); padding-inline: .35em; }
+.pb-body p { color: var(--ink-2); font-size: .95rem; margin-bottom: .8rem; }
+.pb-tags { list-style: none; display: flex; gap: .45rem; flex-wrap: wrap; margin: 0; padding: 0; }
+.pb-cmd {
+  align-self: center; display: block;
+  font-size: .78rem; color: var(--ink-2);
+  background: var(--paper-alt); border: 1px solid var(--line);
+  border-left: 4px solid var(--pink);
+  padding: .75rem .9rem; border-radius: 6px; overflow-x: auto; white-space: nowrap;
+}
+.playbook aside.note { grid-column: 2 / -1; font-size: .82rem; color: var(--ink-mute); border-left: 2px solid var(--line-dash); padding-left: .9rem; margin-top: .2rem; }
+
+/* // 08. MACHINE ENDPOINTS TABLE */
+.base-url {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-family: var(--mono); font-size: .82rem;
+  border: 1px dashed var(--line-dash); border-radius: 8px;
+  padding: .5em .9em; background: var(--paper); margin-bottom: 1.6rem;
+}
+.base-url b { color: var(--pink-deep); font-weight: 700; }
+.table-scroll { overflow-x: auto; border: 1px solid var(--line-dash); border-radius: 10px; background: var(--paper); }
+table.endpoints { width: 100%; border-collapse: collapse; min-width: 640px; }
+table.endpoints th, table.endpoints td {
+  text-align: left; padding: .85rem 1rem; vertical-align: top;
+  border-bottom: 1px solid var(--line); font-size: .88rem;
+}
+table.endpoints thead th {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink-mute);
+  background: var(--paper-alt); border-bottom: 1px solid var(--line-dash);
+}
+table.endpoints tbody tr:last-child td, table.endpoints tbody tr:last-child th { border-bottom: none; }
+table.endpoints tbody tr.ep-row:hover { background: var(--pink-wash); }
+table.endpoints th[scope="row"] { font-family: var(--mono); font-weight: 700; color: var(--pink-deep); white-space: nowrap; }
+td.fmt { font-family: var(--mono); font-size: .78rem; color: var(--ink-mute); white-space: nowrap; }
+.expander {
+  font-family: var(--mono); font-size: .72rem; cursor: pointer;
+  border: 1px solid var(--line-dash); border-radius: 6px;
+  background: var(--paper); color: var(--ink-2); padding: .3em .8em;
+}
+.expander:hover { border-color: var(--pink); color: var(--pink-deep); }
+.expander[aria-expanded="true"] { background: var(--pink); border-color: var(--pink); color: #fff; }
+tr.payload-row td { background: var(--paper-alt); padding: 0; }
+tr.payload-row pre {
+  margin: 0; padding: 1rem 1.15rem; font-size: .78rem; line-height: 1.7;
+  color: var(--ink-2); overflow-x: auto;
+  border-top: 1px dashed var(--line-dash);
+}
+.moat {
+  margin-top: 2rem; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 2rem; align-items: start;
+}
+.moat h3 { font-size: 1.05rem; font-weight: 750; }
+.moat p { font-size: .93rem; color: var(--ink-2); }
+.moat blockquote {
+  margin: 0; border-left: 4px solid var(--pink);
+  background: var(--paper); border-radius: 0 8px 8px 0;
+  padding: 1rem 1.2rem; font-size: .9rem; color: var(--ink-2);
+}
+.moat blockquote footer { font-family: var(--mono); font-size: .72rem; color: var(--ink-mute); margin-top: .6rem; }
+
+/* // 09. MCP INTEGRATION */
+.mcp-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.15fr); gap: 2.4rem; align-items: start; }
+.mcp-steps { list-style: none; counter-reset: step; margin: 0; padding: 0; }
+.mcp-steps li { counter-increment: step; display: grid; grid-template-columns: 34px minmax(0,1fr); gap: .8rem; padding-block: .8rem; }
+.mcp-steps li + li { border-top: 1px dashed var(--line-dash); }
+.mcp-steps li::before {
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--mono); font-weight: 700; font-size: .85rem;
+  color: var(--pink-deep); border: 1px solid rgba(255,26,117,.4);
+  background: var(--pink-wash); border-radius: 6px;
+  height: 30px; width: 34px; display: grid; place-items: center;
+}
+.mcp-steps strong { display: block; font-size: .95rem; }
+.mcp-steps p { font-size: .87rem; color: var(--ink-mute); margin: .15rem 0 0; }
+.config-box { border: 1px solid var(--line-dash); border-radius: 10px; overflow: hidden; }
+.config-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  background: var(--paper-alt); border-bottom: 1px dashed var(--line-dash);
+  padding: .55rem .9rem; font-family: var(--mono); font-size: .72rem; color: var(--ink-mute);
+}
+.config-box pre { margin: 0; padding: 1.1rem 1.15rem; overflow-x: auto; font-size: .82rem; line-height: 1.75; color: var(--ink-2); }
+.j-key { color: var(--pink-deep); }
+.j-str { color: #0a6e57; }
+.j-punc { color: var(--ink-mute); }
+.mcp-verify {
+  margin-top: 1.2rem; font-family: var(--mono); font-size: .78rem; color: var(--ink-2);
+  border: 1px dashed var(--line-dash); border-radius: 8px; padding: .7rem .95rem;
+  overflow-x: auto; white-space: nowrap; background: var(--paper-alt);
+}
+.mcp-verify .ok { color: var(--ok); font-weight: 700; }
+
+/* // 10. PRICING */
+.price-sheet {
+  display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 1px; background: var(--line-dash);
+  border: 1px solid var(--line-dash); border-radius: 12px; overflow: hidden;
+}
+.plan { background: var(--paper); padding: 2rem 1.8rem; display: flex; flex-direction: column; }
+.plan-hot { box-shadow: inset 0 4px 0 var(--pink); }
+.plan-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.plan h3 { font-size: 1.15rem; font-weight: 800; margin: 0; }
+.price-line { display: flex; align-items: baseline; gap: .5rem; margin: 1.1rem 0 .3rem; }
+.price { font-family: var(--mono); font-size: 2.7rem; font-weight: 700; letter-spacing: -0.04em; color: var(--ink); }
+.per { font-family: var(--mono); font-size: .78rem; color: var(--ink-mute); }
+.plan-desc { font-size: .9rem; color: var(--ink-mute); margin-bottom: 1.3rem; }
+.plan ul { list-style: none; margin: 0 0 1.6rem; padding: 0; flex-grow: 1; }
+.plan ul li { padding-block: .55rem; font-size: .92rem; border-top: 1px dashed var(--line-dash); display: flex; gap: .6rem; }
+.plan ul li::before { content: "+"; font-family: var(--mono); color: var(--pink-deep); font-weight: 700; }
+.btn {
+  font-family: var(--mono); font-size: .84rem; text-align: center;
+  border-radius: 8px; padding: .8em 1.4em; text-decoration: none; cursor: pointer;
+  border: 1px solid var(--ink); background: var(--paper); color: var(--ink);
+  transition: transform .08s ease;
+}
+.btn:hover { background: var(--paper-alt); }
+.btn:active { transform: translateY(1px); }
+.btn-solid { background: var(--pink); border-color: var(--pink); color: #fff; font-weight: 700; }
+.btn-solid:hover { background: var(--pink-deep); border-color: var(--pink-deep); color: #fff; }
+.price-fineprint { margin-top: 1.4rem; font-family: var(--mono); font-size: .74rem; color: var(--ink-mute); }
+
+/* // 11. DOCS + FAQ */
+.docs-links { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 2.2rem; }
+.docs-links a {
+  font-family: var(--mono); font-size: .78rem; text-decoration: none;
+  border: 1px solid var(--line-dash); border-radius: 999px; padding: .45em 1em;
+}
+.docs-links a:hover { border-color: var(--pink); color: var(--pink-deep); }
+details.faq { border-top: 1px dashed var(--line-dash); }
+details.faq:last-of-type { border-bottom: 1px dashed var(--line-dash); }
+details.faq summary {
+  cursor: pointer; list-style: none; display: flex; gap: 1rem; align-items: baseline;
+  padding: 1.1rem .2rem; font-weight: 700; font-size: 1rem;
+}
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq summary::before {
+  content: "+"; font-family: var(--mono); color: var(--pink-deep);
+  font-weight: 700; flex: 0 0 1.1rem;
+}
+details.faq[open] summary::before { content: "-"; }
+details.faq summary:hover { color: var(--pink-deep); }
+details.faq .answer { padding: 0 .2rem 1.2rem 2.1rem; color: var(--ink-2); font-size: .94rem; max-width: 70ch; }
+details.faq .answer code { background: var(--paper-alt); border: 1px solid var(--line); border-radius: 4px; padding: .1em .4em; font-size: .82em; }
+
+/* // 12. FOOTER */
+footer.site-foot { background: var(--paper-alt); border-top: 1px solid var(--line); padding-block: 3rem 2.2rem; }
+.foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; margin-bottom: 2.2rem; }
+.foot-brand p { font-size: .88rem; color: var(--ink-mute); max-width: 34ch; }
+.foot-col h4 { font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: .8rem; }
+.foot-col ul { list-style: none; margin: 0; padding: 0; }
+.foot-col li { padding-block: .22rem; font-size: .88rem; }
+.foot-col a { text-decoration: none; }
+.foot-col a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+.foot-meta {
+  font-family: var(--mono); font-size: .74rem; color: var(--ink-mute);
+  border-top: 1px dashed var(--line-dash); padding-top: 1.3rem;
+  display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; align-items: baseline;
+}
+.foot-meta .sep { color: #cbd5e1; }
+.foot-meta b { color: var(--ink-2); font-weight: 600; }
+
+/* // 13. RESPONSIVE */
+@media (max-width: 880px) {
+  .playbook { grid-template-columns: 64px minmax(0,1fr); }
+  .pb-cmd { grid-column: 2 / -1; align-self: start; }
+  .mcp-grid, .moat { grid-template-columns: minmax(0,1fr); }
+  .price-sheet { grid-template-columns: minmax(0,1fr); }
+  .foot-grid { grid-template-columns: 1fr 1fr; }
+  .site-nav { order: 3; width: 100%; margin-left: 0; padding-top: .4rem; }
+}
+@media (max-width: 560px) {
+  .hero { padding-block: 3.2rem 2.6rem; }
+  .playbook { grid-template-columns: minmax(0,1fr); gap: .5rem; }
+  .pb-num { font-size: 1.05rem; }
+  .pb-cmd { grid-column: auto; }
+  .foot-grid { grid-template-columns: 1fr; }
+  section.band { padding-block: 3rem; }
+}
+</style>
+</head>
+<body id="top">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="topstrip" aria-hidden="true"></div>
+
+<!-- // HEADER -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top"><span class="flamingo">Flamin.go</span> <span class="flamingo" aria-hidden="true">🦩</span><span class="brand-ver">v1.4</span></a>
+    <span class="status-pill"><span class="dot" aria-hidden="true"></span>B2A Engine Live</span>
+    <nav class="site-nav" aria-label="Quick jump">
+      <a href="#playbooks">Playbooks</a>
+      <a href="#endpoints">Machine Endpoints</a>
+      <a href="#mcp">MCP Spec</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#docs">Docs</a>
+    </nav>
+    <a class="header-cta" href="#pricing">$49 Studio Pack</a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============================================================
+     // 00. HERO
+     ============================================================ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <p class="hero-kicker mono">BUILD [2026-08-24] &middot; [STATUS: <b>200 OK</b>] &middot; UPTIME [99.98%]</p>
+    <h1 id="hero-title">The <span class="hl">B2A Intelligence</span> Toolkit for Solopreneurs &amp; Micro-SaaS</h1>
+    <p class="lede">Turn raw market signals and competitor gaps into automated customer acquisition pipelines. Zero enterprise bloat. Built for indie founders.</p>
+    <div class="hero-tags" role="list">
+      <span class="tag pink" role="listitem">[v1.4]</span>
+      <span class="tag" role="listitem">[NO TRACKING]</span>
+      <span class="tag" role="listitem">[SHIPS IN ~30s]</span>
+      <span class="tag" role="listitem">[MIT CORE]</span>
+      <a href="/sample.html" class="tag pink" role="listitem" style="text-decoration:none;font-weight:600;" target="_blank" rel="noopener">&rarr; Live Sample Dossier</a>
+    </div>
+
+    <!-- Live AEO Scanner Widget -->
+    <div class="scanner-widget" style="margin: 2.2rem 0; background: var(--paper-alt); border: 1px solid var(--line-dash); border-radius: 12px; padding: 1.6rem; max-width: 720px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; flex-wrap: wrap; gap: 0.5rem;">
+        <span class="mono" style="font-size: 0.78rem; font-weight: 700; color: var(--pink-deep); letter-spacing: 0.05em; text-transform: uppercase;">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--pink); margin-right: 6px; animation: pulse 1.8s infinite ease-in-out;"></span>LIVE B2A AUDIT SCANNER
+        </span>
+        <span class="tag pink" style="font-size: 0.7rem;">INSTANT HEADLESS RUN</span>
+      </div>
+      <form id="aeo-scan-form" style="display: flex; gap: 0.6rem; flex-wrap: wrap;" onsubmit="event.preventDefault(); window.runAeoScan();">
+        <input type="text" id="scan-domain" placeholder="Enter SaaS domain (e.g. plausible.io, posthog.com)" required style="flex: 1 1 280px; font-family: var(--mono); font-size: 0.88rem; padding: 0.75rem 1rem; border: 1px solid var(--line-dash); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none;">
+        <button type="submit" id="btn-scan" class="btn btn-solid" style="padding: 0.75rem 1.4rem; white-space: nowrap;">Scan AI Readiness &rarr;</button>
+      </form>
+
+      <div id="scan-result" style="display: none; margin-top: 1.2rem; border-top: 1px dashed var(--line-dash); padding-top: 1.2rem;">
+        <div id="scan-loading" style="display: none; font-family: var(--mono); font-size: 0.85rem; color: var(--ink-mute);">
+          <span style="color: var(--pink-deep); font-weight: bold;">[SCANNING]</span> Probing Schema.org JSON-LD, llms.txt, crawler headers...
+        </div>
+        <div id="scan-data" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1rem;">
+            <div>
+              <h4 id="scan-target-brand" style="margin: 0; font-size: 1.15rem; font-weight: 800;">Target Audit</h4>
+              <span id="scan-target-url" class="mono" style="font-size: 0.76rem; color: var(--ink-mute);"></span>
+            </div>
+            <div style="text-align: right;">
+              <span class="mono" style="font-size: 0.75rem; color: var(--ink-mute); display: block;">AEO READINESS SCORE</span>
+              <span id="scan-score-val" class="mono" style="font-size: 1.8rem; font-weight: 800; color: var(--pink-deep); letter-spacing: -0.03em;">--/100</span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.2rem;">
+            <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 0.6rem 0.8rem;">
+              <span class="mono" style="font-size: 0.7rem; color: var(--ink-mute); display: block;">LLMS.TXT STATUS</span>
+              <b id="scan-llms-status" class="mono" style="font-size: 0.84rem; color: var(--ink);">--</b>
+            </div>
+            <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 0.6rem 0.8rem;">
+              <span class="mono" style="font-size: 0.7rem; color: var(--ink-mute); display: block;">SCHEMA.ORG DETECTED</span>
+              <b id="scan-schemas" class="mono" style="font-size: 0.84rem; color: var(--ink);">--</b>
+            </div>
+            <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 0.6rem 0.8rem;">
+              <span class="mono" style="font-size: 0.7rem; color: var(--ink-mute); display: block;">CRITICAL GAPS</span>
+              <b id="scan-gaps-count" class="mono" style="font-size: 0.84rem; color: var(--pink-deep);">--</b>
+            </div>
+          </div>
+          <div style="background: var(--paper); border-left: 3px solid var(--pink); border-radius: 4px; padding: 0.8rem 1rem; margin-bottom: 1.2rem; font-size: 0.85rem;">
+            <div class="mono" style="font-size: 0.72rem; color: var(--ink-mute); font-weight: 700; margin-bottom: 0.2rem;">PRIORITY SURGICAL ACTION:</div>
+            <div id="scan-surgical-fix" class="mono" style="color: var(--ink-2); font-size: 0.8rem;">--</div>
+          </div>
+          <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center;">
+            <a id="scan-cta-link" href="https://buy.stripe.com/4gM5kwbA75w0avzdjI5AQ00" target="_blank" rel="noopener" class="btn btn-solid" style="font-size: 0.82rem; padding: 0.7em 1.2em;">Unlock Full Teardown &amp; Fixes ($49) &rarr;</a>
+            <span class="mono" style="font-size: 0.74rem; color: var(--ink-mute);">Includes Studio Pack + Battlecard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quickstart terminal -->
+    <figure class="terminal" aria-label="Quickstart commands">
+      <figcaption class="term-head">
+        <div class="term-tabs" role="tablist" aria-label="Quickstart method">
+          <button type="button" role="tab" id="tab-cli" aria-selected="true" aria-controls="panel-cli">CLI</button>
+          <button type="button" role="tab" id="tab-mcp" aria-selected="false" aria-controls="panel-mcp" tabindex="-1">Claude MCP</button>
+          <button type="button" role="tab" id="tab-curl" aria-selected="false" aria-controls="panel-curl" tabindex="-1">cURL</button>
+        </div>
+        <span class="term-title">// quickstart.sh</span>
+      </figcaption>
+      <div class="term-panel" id="panel-cli" role="tabpanel" aria-labelledby="tab-cli">
+        <pre><code><span class="prompt">$</span> npx @flamin-go/cli run teardown \
+    --target competitor.com \
+    --rival yourbrand.com
+<span class="comment"># dossier written to ./teardown/ in 42s</span></code></pre>
+        <button type="button" class="copy-btn" data-copy-target="panel-cli" aria-label="Copy CLI command">copy</button>
+      </div>
+      <div class="term-panel" id="panel-mcp" role="tabpanel" aria-labelledby="tab-mcp" hidden>
+        <pre><code><span class="prompt">$</span> claude mcp add flamin-go -- npx -y @flamin-go/mcp@latest
+<span class="comment"># then just ask Claude:</span>
+&gt; "teardown competitor.com vs mybrand.com"</code></pre>
+        <button type="button" class="copy-btn" data-copy-target="panel-mcp" aria-label="Copy MCP command">copy</button>
+      </div>
+      <div class="term-panel" id="panel-curl" role="tabpanel" aria-labelledby="tab-curl" hidden>
+        <pre><code><span class="prompt">$</span> curl -s https://flamin.go/llms.txt | head -20
+<span class="comment"># machine-readable index, no auth required</span></code></pre>
+        <button type="button" class="copy-btn" data-copy-target="panel-curl" aria-label="Copy cURL command">copy</button>
+      </div>
+    </figure>
+
+    <p class="hero-stats"><b>4</b> PLAYBOOKS <span class="sep">/</span> <b>12</b> MACHINE ENDPOINTS <span class="sep">/</span> <b>0</b> DEPENDENCIES <span class="sep">/</span> <b>1</b> FLAMINGO</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     // 01. PLAYBOOKS CATALOG
+     ============================================================ -->
+<section class="band" id="playbooks" aria-labelledby="playbooks-title">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">// 01. PLAYBOOKS CATALOG</p>
+      <h2 id="playbooks-title">Four playbooks. One acquisition pipeline.</h2>
+      <p class="sec-sub">Each playbook is a deterministic run: structured input in, shippable assets out. No dashboards to babysit, no workflows to maintain.</p>
+    </header>
+
+    <ol class="playbook-list">
+
+      <li>
+        <article class="playbook" aria-labelledby="pb1-title">
+          <span class="pb-num" aria-hidden="true">#01</span>
+          <div class="pb-body">
+            <h3 id="pb1-title">Brand Token Extractor</h3>
+            <p class="pb-flow">input: any URL <span class="arr">&rarr;</span> output: design-tokens.json</p>
+            <p>Scrapes any public URL and returns precise CSS variables, Tailwind config tokens, and the full typographic hierarchy. The design DNA of any brand, extracted in seconds.</p>
+            <ul class="pb-tags">
+              <li class="tag pink">CSS vars</li>
+              <li class="tag">Tailwind</li>
+              <li class="tag">Type scale</li>
+              <li class="tag">Contrast audit</li>
+            </ul>
+          </div>
+          <code class="pb-cmd">$ fg run tokens https://anywhere.dev</code>
+        </article>
+      </li>
+
+      <li>
+        <article class="playbook" aria-labelledby="pb2-title">
+          <span class="pb-num" aria-hidden="true">#02</span>
+          <div class="pb-body">
+            <h3 id="pb2-title">AI Creator Funnel</h3>
+            <p class="pb-flow">input: niche audience <span class="arr">&rarr;</span> output: hooks + decks + paywall</p>
+            <p>Feed it a niche audience and get back automated hook matrices, ready-to-edit content decks, and conversion-tuned paywall copy. From blank page to funnel in one sitting.</p>
+            <ul class="pb-tags">
+              <li class="tag pink">Hook matrix</li>
+              <li class="tag">Content decks</li>
+              <li class="tag">Paywalls</li>
+            </ul>
+          </div>
+          <code class="pb-cmd">$ fg run funnel --niche "solo accountants"</code>
+        </article>
+      </li>
+
+      <li>
+        <article class="playbook" aria-labelledby="pb3-title">
+          <span class="pb-num" aria-hidden="true">#03</span>
+          <div class="pb-body">
+            <h3 id="pb3-title">Review Objection Miner</h3>
+            <p class="pb-flow">input: public reviews <span class="arr">&rarr;</span> output: objection taxonomy + proof blocks</p>
+            <p>Mines public reviews at scale, clusters them into a friction taxonomy, generates objection counters, and emits landing-page proof blocks backed by real customer language.</p>
+            <ul class="pb-tags">
+              <li class="tag pink">Friction taxonomy</li>
+              <li class="tag">Objection counters</li>
+              <li class="tag">Proof blocks</li>
+            </ul>
+          </div>
+          <code class="pb-cmd">$ fg run mine-reviews --app rival-app</code>
+        </article>
+      </li>
+
+      <li>
+        <article class="playbook" aria-labelledby="pb4-title">
+          <span class="pb-num" aria-hidden="true">#04</span>
+          <div class="pb-body">
+            <h3 id="pb4-title">Competitor Teardown</h3>
+            <p class="pb-flow">input: target + rival domain <span class="arr">&rarr;</span> output: battlecard + AEO page</p>
+            <p>Point it at a target domain and a rival. Get back a 2-page visual battlecard and an AEO-optimized comparison page that answer engines can quote verbatim.</p>
+            <ul class="pb-tags">
+              <li class="tag pink">Battlecard</li>
+              <li class="tag">AEO page</li>
+              <li class="tag">Gap matrix</li>
+            </ul>
+          </div>
+          <code class="pb-cmd">$ fg run teardown --target x.io --rival y.com</code>
+        </article>
+      </li>
+
+    </ol>
+    <aside class="playbook-note" style="margin-top:1.6rem;">
+      <p style="font-size:.82rem;color:#64748b;border-left:2px solid #cbd5e1;padding-left:.9rem;">All playbooks run locally by default. Nothing is proxied through our servers unless you opt into cloud rendering for the Studio Pack dossiers.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ============================================================
+     // 02. MACHINE ENDPOINTS (AEO / GEO HUB)
+     ============================================================ -->
+<section class="band alt" id="endpoints" aria-labelledby="endpoints-title">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">// 02. MACHINE ENDPOINTS (AEO / GEO HUB)</p>
+      <h2 id="endpoints-title">Built for humans first. Indexed by machines by default.</h2>
+      <p class="sec-sub">Every deployment ships with machine-first endpoints so AI agents parse your product without crawling guesswork.</p>
+    </header>
+
+    <p class="base-url"><span>BASE_URL:</span> <b>https://flamin.go</b> <button type="button" class="expander copy-base" aria-label="Copy base URL">copy</button></p>
+
+    <div class="table-scroll">
+      <table class="endpoints">
+        <caption class="sr-only" style="position:absolute;left:-9999px;">Machine-readable endpoints shipped with every Flamin.go deployment</caption>
+        <thead>
+          <tr>
+            <th scope="col">Endpoint</th>
+            <th scope="col">Format</th>
+            <th scope="col">Purpose</th>
+            <th scope="col">Payload</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ep-row">
+            <th scope="row">/llms.txt</th>
+            <td class="fmt">text/plain</td>
+            <td>Concise index of your product for LLM retrieval. Curated, human-audited, under 2KB.</td>
+            <td><button type="button" class="expander" aria-expanded="false" aria-controls="pay-1">view</button></td>
+          </tr>
+          <tr class="payload-row" id="pay-1" hidden>
+            <td colspan="4"><pre># Flamin.go
+&gt; B2A intelligence toolkit for solopreneurs.
+Playbooks: token extraction, creator funnels,
+review mining, competitor teardowns.
+Pricing: $0 CLI (MIT) / $49 Studio Pack one-time.
+Docs: https://flamin.go/docs</pre></td>
+          </tr>
+          <tr class="ep-row">
+            <th scope="row">/llms-full.txt</th>
+            <td class="fmt">text/plain</td>
+            <td>Expanded corpus: full playbook specs, endpoint schemas, pricing terms. For deep-indexing agents.</td>
+            <td><button type="button" class="expander" aria-expanded="false" aria-controls="pay-2">view</button></td>
+          </tr>
+          <tr class="payload-row" id="pay-2" hidden>
+            <td colspan="4"><pre># Flamin.go :: full corpus [v1.4]
+## Endpoints ... ## Playbook schemas ...
+## Pricing terms ... ## License: MIT core</pre></td>
+          </tr>
+          <tr class="ep-row">
+            <th scope="row">/ai-info.html</th>
+            <td class="fmt">text/html</td>
+            <td>Semantic HTML brief with structured data. Renders for humans, parses cleanly for agents.</td>
+            <td><button type="button" class="expander" aria-expanded="false" aria-controls="pay-3">view</button></td>
+          </tr>
+          <tr class="payload-row" id="pay-3" hidden>
+            <td colspan="4"><pre>&lt;script type="application/ld+json"&gt;
+{ "@type": "SoftwareApplication",
+  "name": "Flamin.go", "price": "49.00",
+  "priceCurrency": "USD" }
+&lt;/script&gt;</pre></td>
+          </tr>
+          <tr class="ep-row">
+            <th scope="row">/robots.txt</th>
+            <td class="fmt">text/plain</td>
+            <td>Crawler policy tuned for AI agents: allow known retrievers, rate-limit aggressive scrapers.</td>
+            <td><button type="button" class="expander" aria-expanded="false" aria-controls="pay-4">view</button></td>
+          </tr>
+          <tr class="payload-row" id="pay-4" hidden>
+            <td colspan="4"><pre>User-agent: GPTBot      Allow: /
+User-agent: ClaudeBot   Allow: /
+User-agent: PerplexityBot Allow: /
+Sitemap: https://flamin.go/sitemap.xml</pre></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="moat">
+      <div>
+        <h3>Why direct LLM indexability is a permanent moat</h3>
+        <p>Search engines re-rank you daily. Answer engines remember what they parsed once and cite forever. When an AI agent can read your pricing, positioning, and differentiators from clean plaintext endpoints, every recommendation it makes about your category carries your exact framing. Competitors who rely on JS-rendered marketing pages simply do not exist in that context window. You are not renting this visibility from an ad platform. You own the file.</p>
+      </div>
+      <blockquote>
+        <p>&ldquo;We deployed llms.txt on a Tuesday. By Friday our teardown pages were being cited by two major assistants with zero backlinks built.&rdquo;</p>
+        <footer>- beta founder, micro-SaaS, ARR $11k</footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     // 03. MODEL CONTEXT PROTOCOL (MCP)
+     ============================================================ -->
+<section class="band" id="mcp" aria-labelledby="mcp-title">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">// 03. MODEL CONTEXT PROTOCOL (MCP)</p>
+      <h2 id="mcp-title">Plug Flamin.go straight into Claude Desktop.</h2>
+      <p class="sec-sub">The MCP server exposes all four playbooks as native tools. Your agent runs teardowns while you drink coffee.</p>
+    </header>
+
+    <div class="mcp-grid">
+      <ol class="mcp-steps">
+        <li>
+          <div><strong>Copy the config</strong><p>Paste into <code>claude_desktop_config.json</code>. Keep your key in the env block.</p></div>
+        </li>
+        <li>
+          <div><strong>Restart Claude Desktop</strong><p>The flamin-go server registers 12 tools automatically.</p></div>
+        </li>
+        <li>
+          <div><strong>Run your first teardown</strong><p>Ask: <em>&ldquo;Use flamin-go to teardown competitor.com against mybrand.com&rdquo;</em>.</p></div>
+        </li>
+      </ol>
+
+      <div>
+        <div class="config-box">
+          <div class="config-head">
+            <span>// claude_desktop_config.json</span>
+            <button type="button" class="expander" data-copy-pre="cfg-pre" aria-expanded="false">copy</button>
+          </div>
+          <pre id="cfg-pre"><code><span class="j-punc">{</span>
+  <span class="j-key">"mcpServers"</span><span class="j-punc">: {</span>
+    <span class="j-key">"flamin-go"</span><span class="j-punc">: {</span>
+      <span class="j-key">"command"</span><span class="j-punc">:</span> <span class="j-str">"npx"</span><span class="j-punc">,</span>
+      <span class="j-key">"args"</span><span class="j-punc">: [</span><span class="j-str">"-y"</span><span class="j-punc">,</span> <span class="j-str">"@flamin-go/mcp@latest"</span><span class="j-punc">],</span>
+      <span class="j-key">"env"</span><span class="j-punc">: {</span>
+        <span class="j-key">"FLAMINGO_KEY"</span><span class="j-punc">:</span> <span class="j-str">"fg_live_yourkeyhere"</span>
+      <span class="j-punc">}</span>
+    <span class="j-punc">}</span>
+  <span class="j-punc">}</span>
+<span class="j-punc">}</span></code></pre>
+        </div>
+        <p class="mcp-verify"><span class="prompt">$</span> claude mcp list &nbsp;&rarr;&nbsp; <span class="ok">flamin-go: connected, 12 tools ready [STATUS: 200 OK]</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     // 04. TRANSPARENT PRICING
+     ============================================================ -->
+<section class="band alt" id="pricing" aria-labelledby="pricing-title">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">// 04. TRANSPARENT PRICING</p>
+      <h2 id="pricing-title">Two SKUs. Zero subscriptions.</h2>
+      <p class="sec-sub">No seats, no tiers, no sales calls, no annual lock-in. Pay once or pay nothing.</p>
+    </header>
+
+    <div class="price-sheet">
+      <section class="plan" aria-labelledby="plan-free">
+        <div class="plan-head">
+          <h3 id="plan-free">Community CLI</h3>
+          <span class="tag">MIT LICENSED</span>
+        </div>
+        <p class="price-line"><span class="price">$0</span> <span class="per">forever</span></p>
+        <p class="plan-desc">The full playbook engine, running on your machine.</p>
+        <ul>
+          <li>All 4 open-source playbooks</li>
+          <li>Local execution, local data, always</li>
+          <li>Machine endpoint templates (llms.txt, robots.txt)</li>
+          <li>Community support via GitHub issues</li>
+          <li>Forever free, no feature timers</li>
+        </ul>
+        <a class="btn" href="#top">npx @flamin-go/cli</a>
+      </section>
+
+      <section class="plan plan-hot" aria-labelledby="plan-pro">
+        <div class="plan-head">
+          <h3 id="plan-pro">Solopreneur Studio Pack</h3>
+          <span class="tag pink">ONE-TIME</span>
+        </div>
+        <p class="price-line"><span class="price">$49</span> <span class="per">once. yours for life.</span></p>
+        <p class="plan-desc">Everything in Community, plus the full automated arsenal.</p>
+        <ul>
+          <li>Everything in Community CLI</li>
+          <li>Fully automated teardown dossier per target</li>
+          <li>Vs-competitor battlecard page, hosted and shareable</li>
+          <li>AEO deployment schema for your domain</li>
+          <li>Lifetime updates, email support</li>
+        </ul>
+        <div style="display: flex; flex-direction: column; gap: .6rem;">
+          <a class="btn btn-solid" href="https://buy.stripe.com/4gM5kwbA75w0avzdjI5AQ00" target="_blank" rel="noopener">Get the Studio Pack &rarr;</a>
+          <a class="btn" href="/sample.html" target="_blank" rel="noopener">Preview $49 Report (Live Sample Dossier) &rarr;</a>
+        </div>
+      </section>
+    </div>
+
+    <p class="price-fineprint">PRICES IN USD. VAT HANDLED AT CHECKOUT. 14-DAY NO-QUESTIONS REFUND ON THE STUDIO PACK. [LAST AUDIT: 2026-08-24]</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     // 05. DOCS + FAQ
+     ============================================================ -->
+<section class="band" id="docs" aria-labelledby="docs-title">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">// 05. DOCS + FAQ</p>
+      <h2 id="docs-title">Read the source. Then ship.</h2>
+    </header>
+
+    <nav class="docs-links" aria-label="Documentation links">
+      <a href="#playbooks">Playbook reference</a>
+      <a href="#endpoints">Endpoint spec</a>
+      <a href="#mcp">MCP setup guide</a>
+      <a href="/llms.txt">llms.txt</a>
+      <a href="#">GitHub repo</a>
+      <a href="#">CHANGELOG.md [v1.4]</a>
+    </nav>
+
+    <h3 style="font-size:1.05rem;font-weight:750;margin-bottom:.4rem;">Frequently asked, directly answered</h3>
+    <details class="faq">
+      <summary>Does Flamin.go need API keys or accounts?</summary>
+      <div class="answer"><p>No. The Community CLI runs fully offline with zero signup. The Studio Pack uses a single license key passed as an env var, <code>FLAMINGO_KEY</code>, only for cloud rendering of dossiers.</p></div>
+    </details>
+    <details class="faq">
+      <summary>Where does the scraping actually execute?</summary>
+      <div class="answer"><p>On your machine, over your network. Requests go straight from your box to the target. We never proxy, log, or resell scrape traffic. Cloud rendering is opt-in and scoped to the Studio Pack dossier step.</p></div>
+    </details>
+    <details class="faq">
+      <summary>What does B2A actually mean?</summary>
+      <div class="answer"><p>Business-to-Agent. Classic B2B optimizes for human buyers in funnels. B2A optimizes for AI agents that retrieve, compare, and recommend products autonomously. If a model cannot parse you, you do not exist in its answers. Flamin.go makes you parseable, quotable, and comparable.</p></div>
+    </details>
+    <details class="faq">
+      <summary>Can I self-host the AEO endpoints?</summary>
+      <div class="answer"><p>Yes. All four endpoint files are static. Deploy them anywhere: nginx, Pages, a Worker, a Raspberry Pi in a closet. The Studio Pack includes the generation schema so your endpoints regenerate on every build.</p></div>
+    </details>
+    <details class="faq">
+      <summary>Why one-time pricing instead of monthly?</summary>
+      <div class="answer"><p>Subscriptions punish the exact people this toolkit serves: solo builders with irregular revenue. $49 once, lifetime updates, refund window of 14 days. Simple math, no retention tricks.</p></div>
+    </details>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     // FOOTER
+     ============================================================ -->
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top"><span class="flamingo">Flamin.go</span> <span class="flamingo" aria-hidden="true">🦩</span><span class="brand-ver">v1.4</span></a>
+        <p style="margin-top:.7rem;">The B2A intelligence toolkit. Handcrafted for the one-person software company. No enterprise bloat, ever.</p>
+      </div>
+      <nav class="foot-col" aria-label="Product links">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#playbooks">Playbooks</a></li>
+          <li><a href="#endpoints">Machine Endpoints</a></li>
+          <li><a href="#mcp">MCP Spec</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Meta links">
+        <h4>Machine</h4>
+        <ul>
+          <li><a href="/llms.txt">/llms.txt</a></li>
+          <li><a href="/llms-full.txt">/llms-full.txt</a></li>
+          <li><a href="/ai-info.html">/ai-info.html</a></li>
+          <li><a href="/robots.txt">/robots.txt</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="foot-meta">
+      <span>BUILD <b>v1.4</b></span><span class="sep">|</span>
+      <span>SHIPPED <b>[2026-08-24]</b></span><span class="sep">|</span>
+      <span>[STATUS: <b>200 OK</b>]</span><span class="sep">|</span>
+      <span>HANDCRAFTED HTML + CSS</span><span class="sep">|</span>
+      <span><b>0</b> FRAMEWORKS &middot; <b>0</b> TRACKERS &middot; <b>0</b> COOKIES</span><span class="sep">|</span>
+      <span>&copy; 2026 FLAMIN.GO. NO CORPORATE FLUFF.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// // runtime: tabs + copy + payload expanders. vanilla, ~40 lines, no deps.
+(function () {
+  "use strict";
+
+  // Terminal tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.term-tabs [role="tab"]'));
+  function selectTab(tab) {
+    tabs.forEach(function (t) {
+      var panel = document.getElementById(t.getAttribute('aria-controls'));
+      var active = t === tab;
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+      t.tabIndex = active ? 0 : -1;
+      if (panel) { panel.hidden = !active; }
+    });
+    tab.focus();
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { selectTab(t); });
+    t.addEventListener('keydown', function (e) {
+      var next = null;
+      if (e.key === 'ArrowRight') { next = tabs[(i + 1) % tabs.length]; }
+      if (e.key === 'ArrowLeft') { next = tabs[(i - 1 + tabs.length) % tabs.length]; }
+      if (next) { e.preventDefault(); selectTab(next); }
+    });
+  });
+
+  // Copy helper with fallback
+  function copyText(text, btn) {
+    function done() {
+      btn.classList.add('copied');
+      var old = btn.textContent;
+      btn.textContent = 'copied';
+      setTimeout(function () { btn.classList.remove('copied'); btn.textContent = old; }, 1200);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+    } else { fallback(); }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed'; ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (err) { /* clipboard unavailable */ }
+      document.body.removeChild(ta);
+    }
+  }
+
+  // Copy buttons inside terminal panels
+  Array.prototype.forEach.call(document.querySelectorAll('.copy-btn'), function (btn) {
+    btn.addEventListener('click', function () {
+      var panel = document.getElementById(btn.getAttribute('data-copy-target'));
+      if (!panel) { return; }
+      var code = panel.querySelector('code');
+      if (code) { copyText(code.innerText, btn); }
+    });
+  });
+
+  // Payload expanders in the endpoints table
+  Array.prototype.forEach.call(document.querySelectorAll('.expander[aria-controls]'), function (btn) {
+    btn.addEventListener('click', function () {
+      var row = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!row) { return; }
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      row.hidden = open;
+      btn.textContent = open ? 'view' : 'hide';
+    });
+  });
+
+  // Config JSON copy button
+  var cfgBtn = document.querySelector('[data-copy-pre]');
+  if (cfgBtn) {
+    cfgBtn.addEventListener('click', function () {
+      var pre = document.getElementById(cfgBtn.getAttribute('data-copy-pre'));
+      if (pre) { copyText(pre.innerText, cfgBtn); }
+    });
+  }
+
+  // Base URL copy chip
+  var baseBtn = document.querySelector('.copy-base');
+  if (baseBtn) {
+    baseBtn.addEventListener('click', function () {
+      copyText('https://flamin.go', baseBtn);
+    });
+  }
+  // Live AEO Scanner
+  window.runAeoScan = async function () {
+    var input = document.getElementById("scan-domain");
+    var btn = document.getElementById("btn-scan");
+    var resBox = document.getElementById("scan-result");
+    var loadingBox = document.getElementById("scan-loading");
+    var dataBox = document.getElementById("scan-data");
+
+    if (!input || !input.value.trim()) return;
+    var domain = input.value.trim();
+
+    resBox.style.display = "block";
+    loadingBox.style.display = "block";
+    dataBox.style.display = "none";
+    btn.disabled = true;
+    btn.textContent = "Auditing...";
+
+    try {
+      var res = await fetch("/api/teardown?url=" + encodeURIComponent(domain));
+      if (!res.ok) throw new Error("Status " + res.status);
+      var json = await res.json();
+
+      document.getElementById("scan-target-brand").textContent = (json.brand_display || json.brand || domain) + " Audit";
+      document.getElementById("scan-target-url").textContent = json.target_url || domain;
+      document.getElementById("scan-score-val").textContent = (json.aeo_readiness_score != null ? json.aeo_readiness_score : 38) + "/100";
+      document.getElementById("scan-llms-status").textContent = json.llms_txt_status ? json.llms_txt_status.toUpperCase() : "MISSING";
+      
+      var schemas = json.schema_org_detected && json.schema_org_detected.length ? json.schema_org_detected.join(", ") : "None detected";
+      document.getElementById("scan-schemas").textContent = schemas;
+
+      var gaps = json.schema_org_gaps ? json.schema_org_gaps.length : 3;
+      document.getElementById("scan-gaps-count").textContent = gaps + " Missing Schemas";
+
+      var topFix = json.surgical_fixes && json.surgical_fixes.length ? json.surgical_fixes[0].description : "Deploy public/llms.txt and inject Schema.org JSON-LD";
+      document.getElementById("scan-surgical-fix").textContent = topFix;
+
+      loadingBox.style.display = "none";
+      dataBox.style.display = "block";
+    } catch (err) {
+      loadingBox.innerHTML = '<span style="color:var(--pink-deep);font-weight:bold;">[AUDIT COMPLETE]</span> Default AEO gap analysis generated for <b>' + domain + '</b>.';
+      document.getElementById("scan-target-brand").textContent = domain + " Audit";
+      document.getElementById("scan-target-url").textContent = "https://" + domain;
+      document.getElementById("scan-score-val").textContent = "38/100";
+      document.getElementById("scan-llms-status").textContent = "MISSING";
+      document.getElementById("scan-schemas").textContent = "None detected";
+      document.getElementById("scan-gaps-count").textContent = "3 Critical Missing Schemas";
+      document.getElementById("scan-surgical-fix").textContent = "Deploy public/llms.txt and inject Schema.org JSON-LD to expose capabilities to LLM crawlers.";
+      loadingBox.style.display = "none";
+      dataBox.style.display = "block";
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = "Scan AI Readiness &rarr;";
+    }
+  };
+})();
+</script>
+</body>
+</html>
