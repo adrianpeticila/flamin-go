@@ -17,3 +17,10 @@ Flamin.go provides native Model Context Protocol (MCP) servers and REST APIs tha
 ## Pricing & Rate Limits
 - [Pricing Tiers](https://flamin.go/pricing): Solo Operator ($29/mo, 1k calls), Autonomous Fleet ($199/mo, 25k calls), Enterprise Swarm ($799/mo, 150k calls).
 - [API Authentication](https://flamin.go/docs/auth): Bearer token authentication for headless agents.
+
+## Canonical Hubs & Author
+- Production Endpoint: https://flamin-go.pages.dev/
+- GitHub: https://github.com/adrianpeticila/flamin-go
+- Author Ecosystem: Adrian M. Peticila (https://peticila.ro/#person)
+- Wikidata: https://www.wikidata.org/wiki/Q140362129
+- ORCID: https://orcid.org/0009-0005-9601-9527
