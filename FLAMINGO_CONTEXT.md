@@ -3,7 +3,7 @@
 **Status:** ACTIVE ARCHITECTURE & REVENUE ENGINE (2026-2027) - Ready for Sunday evening execution.
 **Classification:** Headless Autonomous Intelligence & Monetization Platform  
 **Entity Isolation:** Crimson Venus SRL (B2B Infrastructure, Headless API, Enterprise Licenses) / Strict Anonymous Sub-Nodes (Micro-SaaS, Visual Generators)  
-**Execution Standard:** OPUS_DOCTRINE (Zero fluff, verified root cause, deterministic code, zero em-dash)  
+**Execution Standard:** EXECUTION_DOCTRINE (Zero fluff, verified root cause, deterministic code, zero em-dash)  
 
 ---
 
