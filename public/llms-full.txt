@@ -1,42 +1,210 @@
-# flamin.go - Lightweight Automation Engine
+# Flamin.go: Full Extended Machine Specification (llms-full.txt)
 
-## Value
-Build fast, ship without friction. Dedicated micro-apps and automated creative growth systems designed for conversion and speed.
+This document contains the complete technical specification, REST API schemas, FastMCP tool definitions, and system prompts for Flamin.go.
 
-## Machine-to-Machine (M2M) Agentic Commerce API
+---
 
-### Product Catalog
-Endpoint: GET /api/catalog.json
-Schema Contract (exact 7 keys):
-- id (string)
-- name (string)
-- price_cents (integer)
-- currency ("USD")
-- description (string)
-- sample_output_url (string)
-- checkout_type ("stripe_hosted" | "x402")
+## 1. System Overview & Authentication
 
-Products:
-1. ad-concept-pack: 9900 cents ($99 USD), checkout_type: stripe_hosted
-   Description: High-velocity ad concept generation system delivering creative angle variations, hook scripts, and audience targeting parameters for rapid performance testing.
-2. visual-hook-matrix: 4900 cents ($49 USD), checkout_type: stripe_hosted
-   Description: Structured visual hook library and retention scoring matrix designed for automated video and image ad creative synthesis pipelines.
-3. micro-hook-query: 500 cents ($5 USD), checkout_type: x402
-   Description: Programmatic single-query visual hook scoring and real-time creative angle generation over x402 micropayment rail.
+Flamin.go exposes headless capabilities via two primary transport layers:
+1. FastMCP (Model Context Protocol) over stdio or Server-Sent Events (SSE).
+2. REST HTTP API under `https://api.flamin.go/v1`.
 
-### Agent Buy Endpoint
-Endpoint: POST /api/agent/buy
-Headers:
-- Content-Type: application/json
-- Idempotency-Key (optional, string): Prevents duplicate transactions
-- X-Payment-Proof (optional, string): Settlement voucher for x402 rail
+### Authentication
+All HTTP requests require a standard Bearer token in the `Authorization` header:
+```http
+Authorization: Bearer flm_live_xxxxxxxxxxxxxxxxxxxxxxxx
+```
 
-Flow:
-- stripe_hosted: Returns HTTP 200 with checkout_url and X-Checkout-Type: stripe_hosted.
-- x402 without payment proof: Returns HTTP 402 with WWW-Authenticate challenge, X-Payment-* headers, and invoice object.
-- x402 with payment proof: Returns HTTP 200 with order confirmation and fulfillment access URL.
+---
 
-### Settlement Webhook
-Endpoint: POST /api/agent/payments/webhook
-Authentication: HMAC-SHA256 signature in X-Signature-SHA256 or X-Signature header over raw request body.
-Safety Guardrail: Hard $20.00 USD (2000 cents) daily cap on programmatic settlements. Rejects excess requests with HTTP 429.
+## 2. FastMCP Tool Definitions & Schemas
+
+### Tool: `track_competitor_diff`
+Monitors target URLs, extracts DOM diffs, analyzes positioning shifts, and generates executive teardowns.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "target_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Full URL of competitor landing page or pricing table."
+    },
+    "comparison_baseline_id": {
+      "type": "string",
+      "description": "Previous snapshot ID to compare against. If omitted, captures new baseline."
+    },
+    "extract_pricing": {
+      "type": "boolean",
+      "default": true,
+      "description": "Extract structured pricing tiers and interaction caps."
+    }
+  },
+  "required": ["target_url"]
+}
+```
+
+**Output Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["success", "unchanged", "error"] },
+    "snapshot_id": { "type": "string" },
+    "positioning_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": { "type": "string" },
+          "previous": { "type": "string" },
+          "current": { "type": "string" },
+          "impact_score": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "pricing_diff": { "type": "object" }
+  }
+}
+```
+
+---
+
+### Tool: `clean_document_to_markdown`
+Firecrawl-style document sanitization that converts messy HTML, PDF, or Word documents into clean, LLM-ready markdown.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "source_content": {
+      "type": "string",
+      "description": "Raw HTML string or base64 encoded document bytes."
+    },
+    "content_type": {
+      "type": "string",
+      "enum": ["html", "pdf", "docx"],
+      "default": "html"
+    },
+    "strip_navigation": {
+      "type": "boolean",
+      "default": true
+    },
+    "preserve_tables": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": ["source_content"]
+}
+```
+
+**Output Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "markdown": { "type": "string" },
+    "token_count_estimate": { "type": "integer" },
+    "extracted_links": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+```
+
+---
+
+### Tool: `record_decision_node`
+Semantica pattern: appends a deterministic decision node to the causal provenance DAG.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "node_id": { "type": "string" },
+    "parent_node_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "trigger_event": { "type": "string" },
+    "reasoning": { "type": "string" },
+    "action_taken": { "type": "string" },
+    "confidence_score": { "type": "number" },
+    "metadata": { "type": "object" }
+  },
+  "required": ["node_id", "trigger_event", "reasoning", "action_taken"]
+}
+```
+
+---
+
+### Tool: `verify_persona_isolation`
+MatrAIx pattern: validates outbound payloads against cross-brand contamination and identity leakage.
+
+**Input Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "brand_context": {
+      "type": "string",
+      "enum": ["FLAMINGO", "ZERO_HYPE", "RENAISSANCE_GYM", "AI_BABIES", "TAAM", "APONIA", "ANONYMOUS_PERSONA"]
+    },
+    "outbound_payload": { "type": "string" }
+  },
+  "required": ["brand_context", "outbound_payload"]
+}
+```
+
+**Output Schema:**
+```json
+{
+  "type": "object",
+  "properties": {
+    "is_valid": { "type": "boolean" },
+    "violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": { "type": "string" },
+          "matched_pattern": { "type": "string" },
+          "severity": { "type": "string", "enum": ["FATAL", "WARNING"] }
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## 3. HTTP REST Endpoints
+
+### `POST /api/v1/agent/invoke`
+Synchronous or asynchronous tool invocation gateway.
+- **Request Body:** `{ "tool_name": "track_competitor_diff", "arguments": { ... } }`
+- **Response 200:** `{ "success": true, "data": { ... }, "interaction_quota_remaining": 24890 }`
+- **Response 429:** `{ "error": "interaction_cap_exceeded", "limit": 25000, "upgrade_url": "https://flamin.go/pricing" }`
+
+### `GET /api/v1/graph/trace?node_id={node_id}`
+Returns complete causal chain of reasoning for any historical agent decision.
+
+---
+
+## 4. Error Code Reference
+
+| Code | HTTP Status | Meaning | Resolution |
+| :--- | :--- | :--- | :--- |
+| `AUTH_INVALID_TOKEN` | 401 | Missing or invalid API bearer token | Verify token in operator cockpit |
+| `QUOTA_EXCEEDED` | 429 | Monthly agent interaction cap reached | Upgrade subscription tier |
+| `ISOLATION_VIOLATION` | 403 | PersonaGuard intercepted leaked entity metadata | Sanitize outbound payload |
+| `RATE_LIMIT_BURST` | 429 | Exceeded burst limit of 50 calls/sec | Apply exponential backoff |
+| `PARSER_MALFORMED_DOM` | 422 | Target document could not be sanitized | Check source format |

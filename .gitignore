@@ -2,3 +2,4 @@
 _worker.bundle
 node_modules/
 .DS_Store
+FLAMINGO_CONTEXT.md
