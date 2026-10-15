@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ - Flamin.go Teardowns</title>
+<meta name="description" content="Flamin.go FAQ: async 24-48h CRO teardowns, the 49 USD Studio Pack, paste-ready rewrites, who it is for, and how to start.">
+<link rel="canonical" href="https://flamin-go.pages.dev/faq/">
+<link rel="alternate" type="text/markdown" href="https://flamin-go.pages.dev/faq/index.md">
+<style>
+  /* ---------- Design tokens ---------- */
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f8fafc;
+    --ink: #0f172a;
+    --ink-2: #1e293b;
+    --ink-3: #475569;
+    --ink-4: #94a3b8;
+    --line: #e2e8f0;
+    --pink: #FF1A75;
+    --pink-deep: #E60067;
+    --pink-soft: #fff0f5;
+    --green: #059669;
+    --amber: #d97706;
+    --red: #dc2626;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg-alt);
+    color: var(--ink-2);
+    line-height: 1.65;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1080px; margin: 0 auto; padding: 24px 20px 96px; }
+
+  /* ---------- Mono metadata tag utility ---------- */
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 10px;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .tag.pink { color: var(--pink-deep); border-color: #ffd6e4; background: var(--pink-soft); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ---------- Header ---------- */
+  header.masthead {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 16px;
+  }
+  header.masthead .brandline {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .brand { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+  .brand strong { color: var(--pink); }
+
+  h1.dossier-title {
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  h1.dossier-title .vs { color: var(--pink); font-family: var(--mono); font-weight: 600; font-size: 0.55em; vertical-align: middle; padding: 0 6px; }
+  .dossier-sub { color: var(--ink-3); max-width: 62ch; margin-bottom: 22px; }
+
+  .scorecard-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .scorecard {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    background: var(--bg-alt);
+  }
+  .scorecard .label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ink-4); margin-bottom: 6px;
+  }
+  .scorecard .value { font-size: 26px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .scorecard .value small { font-size: 13px; color: var(--ink-4); font-weight: 500; }
+  .scorecard.hero-score { border-color: #ffb9d2; background: var(--pink-soft); }
+  .scorecard.hero-score .value { color: var(--pink-deep); }
+
+  /* ---------- Section chrome ---------- */
+  section.panel {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-top: 28px;
+    overflow: hidden;
+  }
+  section > .panel-head {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .panel-head h2 { font-size: 17px; color: var(--ink); letter-spacing: -0.01em; }
+  .panel-head h2 .num {
+    font-family: var(--mono); color: var(--pink); font-size: 12px;
+    display: block; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;
+  }
+  .panel-body { padding: 24px; }
+
+  /* ---------- Controls bar ---------- */
+  .controls {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: end;
+  }
+  .controls label {
+    display: block; font-family: var(--mono); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-4); margin-bottom: 5px;
+  }
+  .controls input[type="text"] {
+    font-family: var(--sans); font-size: 14px; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 10px; width: 210px; background: var(--bg-alt);
+  }
+  .controls input[type="text"]:focus { outline: 2px solid var(--pink); outline-offset: 1px; border-color: transparent; }
+  .btn {
+    appearance: none; border: 1px solid var(--line); background: var(--bg);
+    color: var(--ink-2); font-family: var(--mono); font-size: 12px;
+    border-radius: 6px; padding: 9px 14px; cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  .btn:hover { border-color: var(--pink); color: var(--pink-deep); }
+  .btn.primary { background: var(--pink); border-color: var(--pink); color: #fff; }
+  .btn.primary:hover { background: var(--pink-deep); border-color: var(--pink-deep); color: #fff; }
+
+  /* ---------- Battlefield matrix (Section 1) ---------- */
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.matrix th, table.matrix td {
+    border-bottom: 1px solid var(--line); padding: 11px 14px; text-align: left; vertical-align: top;
+  }
+  table.matrix thead th {
+    font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--ink-3); background: var(--bg-alt);
+    border-bottom: 1px solid var(--line);
+  }
+  table.matrix thead th.col-client { color: var(--pink-deep); }
+  table.matrix tbody th[scope="row"] {
+    font-weight: 600; color: var(--ink); width: 220px; font-size: 13px;
+  }
+  .pill {
+    font-family: var(--mono); font-size: 10.5px; padding: 2px 9px;
+    border-radius: 999px; display: inline-block; white-space: nowrap;
+  }
+  .pill.win  { background: #ecfdf5; color: var(--green); border: 1px solid #a7f3d0; }
+  .pill.risk { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+  .pill.mid  { background: #fffbeb; color: var(--amber); border: 1px solid #fde68a; }
+  .bar-wrap { min-width: 110px; }
+  .bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; margin-top: 5px; }
+  .bar i { display: block; height: 100%; background: var(--pink); border-radius: 999px; }
+  .num-cell { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Objection taxonomy (Section 2) ---------- */
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink-3);
+    border-radius: 999px; padding: 6px 14px; transition: all .15s;
+  }
+  .chip:hover { border-color: var(--pink); color: var(--pink-deep); }
+  .chip.active { background: var(--pink); border-color: var(--pink); color: #fff; }
+  ul.objections { list-style: none; }
+  ul.objections li {
+    border: 1px solid var(--line); border-left: 3px solid var(--pink);
+    border-radius: 6px; padding: 13px 16px; margin-bottom: 10px;
+    display: flex; gap: 14px; align-items: baseline;
+  }
+  ul.objections li.sev-high   { border-left-color: var(--red); }
+  ul.objections li.sev-medium { border-left-color: var(--amber); }
+  ul.objections li.sev-low    { border-left-color: var(--green); }
+  .obj-text { flex: 1; }
+  .obj-source { font-family: var(--mono); font-size: 10.5px; color: var(--ink-4); margin-top: 3px; }
+  .obj-empty { color: var(--ink-4); font-style: italic; padding: 20px 4px; display: none; }
+
+  /* ---------- AI search audit (Section 3) ---------- */
+  .sim-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ai-window { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .ai-chrome {
+    background: var(--bg-alt); border-bottom: 1px solid var(--line);
+    padding: 9px 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .ai-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .ai-chrome .engine-name { font-family: var(--mono); font-size: 12px; color: var(--ink-3); margin-left: auto; }
+  .ai-body { padding: 20px 22px; font-size: 14px; }
+  .ai-body p { margin-bottom: 12px; }
+  .hl-hallucination {
+    background: #fef2f2; border-bottom: 1px dashed var(--red);
+    padding: 0 2px; cursor: help; position: relative;
+  }
+  .hl-cited { background: var(--pink-soft); border-bottom: 1px dashed var(--pink); padding: 0 2px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 16px; font-size: 12px; color: var(--ink-3); }
+  .key { display: inline-block; width: 26px; border-bottom: 2px dashed; margin-right: 6px; vertical-align: middle; }
+  .key.red { border-color: var(--red); } .key.pinkk { border-color: var(--pink); }
+  .prompt-box {
+    font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+    background: var(--bg-alt); border: 1px dashed var(--line); border-radius: 6px;
+    padding: 8px 12px; margin-bottom: 16px;
+  }
+  .prompt-box b { color: var(--pink-deep); font-weight: 600; }
+
+  /* ---------- Attack plan (Section 4) ---------- */
+  ol.plan { list-style: none; counter-reset: step; }
+  ol.plan > li {
+    counter-increment: step; border: 1px solid var(--line); border-radius: var(--radius);
+    margin-bottom: 14px; overflow: hidden;
+  }
+  ol.plan > li::before { content: none; }
+  .step-head {
+    display: flex; align-items: baseline; gap: 12px; padding: 13px 18px;
+    background: var(--bg-alt); border-bottom: 1px solid var(--line); cursor: pointer;
+  }
+  .step-head::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--pink);
+  }
+  .step-head h3 { font-size: 14px; color: var(--ink); flex: 1; }
+  .step-toggle { font-family: var(--mono); font-size: 12px; color: var(--ink-4); }
+  .step-body { padding: 18px; display: none; }
+  ol.plan > li.open .step-body { display: block; }
+  ol.plan > li.open .step-toggle { content: "-"; }
+  .code-block {
+    position: relative; background: #0f172a; color: #e2e8f0;
+    font-family: var(--mono); font-size: 12px; line-height: 1.7;
+    border-radius: 6px; padding: 16px 18px; overflow-x: auto; white-space: pre;
+  }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    font-family: var(--mono); font-size: 10.5px;
+    background: rgba(255,255,255,.08); color: #cbd5e1;
+    border: 1px solid rgba(255,255,255,.18); border-radius: 5px;
+    padding: 4px 10px; cursor: pointer;
+  }
+  .copy-btn:hover { background: var(--pink); border-color: var(--pink); color: #fff; }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* ---------- Footer ---------- */
+  footer.metafoot {
+    margin-top: 40px; border-top: 1px solid var(--line); padding-top: 18px;
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  footer.metafoot p { font-family: var(--mono); font-size: 11px; color: var(--ink-4); }
+
+  /* ---------- Toast ---------- */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: #fff; font-family: var(--mono); font-size: 12px;
+    padding: 10px 18px; border-radius: 999px; opacity: 0;
+    transition: transform .25s, opacity .25s; pointer-events: none; z-index: 99;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 720px) {
+    .panel-body, header.masthead { padding: 18px; }
+    .controls input[type="text"] { width: 100%; }
+    .matrix-scroll { overflow-x: auto; }
+    table.matrix { min-width: 640px; }
+  }
+
+  /* ============================================================
+     PRINT / PDF OPTIMIZATION
+     ============================================================ */
+  @media print {
+    @page {
+      size: A4;
+      margin: 16mm 14mm;
+    }
+    :root { --bg-alt: #ffffff; }
+    body { font-size: 10.5pt; background: #fff; }
+    .page { max-width: none; padding: 0; }
+    header.masthead, section.panel, .scorecard,
+    ul.objections li, ol.plan > li, .ai-window {
+      break-inside: avoid; page-break-inside: avoid;
+      border-color: #cbd5e1;
+    }
+    section.panel { break-before: page; margin-top: 0; padding-top: 8mm; border: none; }
+    section.panel:first-of-type { break-before: auto; }
+    .panel-body { padding: 10px 0; }
+    .panel-head { border-bottom: 2px solid #0f172a; padding: 0 0 6px; }
+    .controls, .filter-bar, .copy-btn, #toast, .btn, .sim-tabs { display: none !important; }
+    .step-body { display: block !important; }
+    .ai-window { border: 1px solid #94a3b8; }
+    .ai-chrome { background: #fff; }
+    .code-block {
+      background: #f8fafc !important; color: #0f172a !important;
+      border: 1px solid #cbd5e1; white-space: pre-wrap; word-break: break-all;
+    }
+    a { color: inherit; text-decoration: none; }
+    h1.dossier-title { font-size: 22pt; }
+    .print-only-note { display: block !important; }
+    footer.metafoot { border-top: 1px solid #94a3b8; }
+  }
+  .print-only-note { display: none; font-family: var(--mono); font-size: 9pt; color: #64748b; margin-top: 6mm; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "en",
+  "url": "https://flamin-go.pages.dev/faq/",
+  "author": {
+    "@type": "Person",
+    "name": "Adrian M. Peticila",
+    "url": "https://flamin-go.pages.dev/"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a Flamin teardown?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An async roast of your first 5 seconds: hero, headline, CTA, proof. Friction points plus exact rewrites, in 24-48h. No call."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How fast do I get it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "24-48h async. You send the URL; you get a written teardown document. No kickoff, no debrief call."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do you actually rewrite?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Headlines first, then subhead, CTA microcopy, proof order. You get before/after blocks pasted straight into the page, so your team ships without guessing. See the 49 USD Studio Pack."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who is this for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Solo founders and micro-SaaS teams of 1-5 people. Indie and bootstrapped. Allergic to enterprise process. If your launch needs a steering committee, this is not for you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you touch design or only copy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Copy drives it; design notes only where layout kills conversion (contrast, hierarchy, one primary CTA). No full redesign."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is this different from a generic audit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "First-5-seconds lens, CTA friction scoring, paste-ready rewrites. Not a 40-page PDF with stock advice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do you need from me?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "URL, one-line ICP, current CTA and price. Enough to start."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you guarantee conversion lift?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Teardowns raise clarity and click probability; traffic quality still matters. Shippable fixes guaranteed, not percentages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the 49 USD Studio Pack include?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Written teardown plus rewrite blocks plus machine endpoints (llms.txt, ai-info.html). One-time, async, no subscription."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do we start?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pick the Studio Pack CTA, send URL plus ICP. Teardown lands in 24-48h. Iterate async after."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+  <div class="page">
+
+  <header class="masthead">
+    <div class="brandline">
+      <span class="brand"><strong>[FLAMIN.GO]</strong> executive teardown dossier</span>
+      <div class="tags">
+        <span class="tag">[$49 SOLOPRENEUR EDITION]</span>
+        <span class="tag" id="meta-timestamp">[2026-10-14]</span>
+        <span class="tag" id="meta-hash">[AUDIT HASH: sha256:00000000]</span>
+      </div>
+    </div>
+
+    <h1 class="dossier-title">
+      <span>FAQ</span>
+      <span class="vs">// compiled answers //</span>
+      <span>the teardown process</span>
+    </h1>
+    <p class="dossier-sub">
+      Everything buyers ask before sending a URL. Async, written, 24-48h. No kickoff calls, no
+      retainer theater. Priced for solopreneurs who want decision-grade CRO in one sitting.
+    </p>
+  </header>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 01.</span>What is a Flamin teardown?</h2>
+      <div class="tags"><span class="tag pink">[ASYNC 24-48H]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>An async roast of your first 5 seconds: hero, headline, CTA, proof. Friction points plus exact rewrites, in 24-48h. No call.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 02.</span>How fast do I get it?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>24-48h async. You send the URL; you get a written teardown document. No kickoff, no debrief call.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 03.</span>What do you actually rewrite?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>Headlines first, then subhead, CTA microcopy, proof order. You get before/after blocks pasted straight into the page, so your team ships without guessing. See the 49 USD Studio Pack.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 04.</span>Who is this for?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>Solo founders and micro-SaaS teams of 1-5 people. Indie and bootstrapped. Allergic to enterprise process. If your launch needs a steering committee, this is not for you.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 05.</span>Do you touch design or only copy?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>Copy drives it; design notes only where layout kills conversion (contrast, hierarchy, one primary CTA). No full redesign.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 06.</span>How is this different from a generic audit?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>First-5-seconds lens, CTA friction scoring, paste-ready rewrites. Not a 40-page PDF with stock advice.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 07.</span>What do you need from me?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>URL, one-line ICP, current CTA and price. Enough to start.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 08.</span>Do you guarantee conversion lift?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>No. Teardowns raise clarity and click probability; traffic quality still matters. Shippable fixes guaranteed, not percentages.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 09.</span>What does the 49 USD Studio Pack include?</h2>
+      <div class="tags"><span class="tag">[WRITTEN]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>Written teardown plus rewrite blocks plus machine endpoints (llms.txt, ai-info.html). One-time, async, no subscription.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// 10.</span>How do we start?</h2>
+      <div class="tags"><span class="tag pink">[ASYNC 24-48H]</span></div>
+    </div>
+    <div class="panel-body">
+      <p>Pick the Studio Pack CTA, send URL plus ICP. Teardown lands in 24-48h. Iterate async after.</p>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="panel-head">
+      <h2><span class="num">// CTA.</span>Ready for your roast</h2>
+      <div class="tags"><span class="tag pink">[$49 STUDIO PACK]</span></div>
+    </div>
+    <div class="panel-body">
+      <a class="btn primary" href="https://buy.stripe.com/4gM5kwbA75w0avzdjI5AQ00" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;background:var(--pink);color:#fff;border-color:var(--pink);">Get Your $49 Audit &rarr;</a>
+    </div>
+  </section>
+
+  <footer class="metafoot">
+    <p>[FLAMIN.GO] // teardown dossier template // $49 solopreneur edition</p>
+    <p>[STATUS: 200 OK] [GENERATED: <span id="foot-ts">2026-10-14</span>]</p>
+  </footer>
+
+  </div>
+<script>
+(function () {
+  var q = function (s) { return document.querySelector(s); };
+  function simpleHash(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return (h >>> 0).toString(16).padStart(8, "0");
+  }
+  var iso = new Date().toISOString().slice(0, 10);
+  q("#meta-timestamp").textContent = "[" + iso + "]";
+  q("#meta-hash").textContent = "[AUDIT HASH: sha256:" + simpleHash("faq|flamin.go|" + iso) + "]";
+  q("#foot-ts").textContent = iso;
+})();
+</script>
+</body>
+</html>

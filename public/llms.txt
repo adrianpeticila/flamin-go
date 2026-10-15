@@ -1,6 +1,9 @@
 # Flamin.go
 > Headless autonomous intelligence and revenue execution engine for AI agents and operator swarms.
 
+## FAQ
+- [FAQ - Flamin.go Teardowns](https://flamin-go.pages.dev/faq/)
+
 Flamin.go provides native Model Context Protocol (MCP) servers and REST APIs that enable autonomous agents to execute competitive intelligence, document sanitization, causal decision auditing, and programmatic revenue workflows without graphical UI overhead.
 
 ## Core Documentation & Metadata

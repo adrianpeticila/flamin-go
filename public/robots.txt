@@ -34,4 +34,17 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
+# FAQ - open explicitly for classic + AI crawlers
+User-agent: Googlebot
+Allow: /faq/
+
+User-agent: GPTBot
+Allow: /faq/
+
+User-agent: ClaudeBot
+Allow: /faq/
+
+User-agent: PerplexityBot
+Allow: /faq/
+
 Sitemap: https://flamin-go.pages.dev/sitemap.xml
