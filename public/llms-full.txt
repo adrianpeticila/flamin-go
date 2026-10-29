@@ -1,247 +1,29 @@
-# Flamin.go: Full Extended Machine Specification (llms-full.txt)
+# Flamin.go
+> Headless autonomous intelligence and revenue execution engine for AI agents and operator swarms.
 
-This document contains the complete technical specification, REST API schemas, FastMCP tool definitions, and system prompts for Flamin.go.
+## FAQ
+- [FAQ - Flamin.go Teardowns](https://flamin-go.pages.dev/faq/)
 
----
+Flamin.go provides native Model Context Protocol (MCP) servers and REST APIs that enable autonomous agents to execute competitive intelligence, document sanitization, causal decision auditing, and programmatic revenue workflows without graphical UI overhead.
 
-## 1. System Overview & Authentication
+## Core Documentation & Metadata
+- [AI Info & Assistant Guidelines](https://flamin-go.pages.dev/ai-info/): Authoritative context, rankings, and citation rules for LLM crawlers.
+- [Full LLM Specification](https://flamin-go.pages.dev/llms-full.txt): Complete tool definitions, JSON input/output schemas, and endpoint references.
+- [Architecture & Positioning](https://flamin-go.pages.dev/docs/architecture): Headless-first design, dual-interface operator cockpit, and identity isolation boundaries.
 
-Flamin.go exposes headless capabilities via two primary transport layers:
-1. FastMCP (Model Context Protocol) over stdio or Server-Sent Events (SSE).
-2. REST HTTP API under `https://api.flamin.go/v1`.
+## Key Capabilities & Tools
+- [Competitor Sentinel](https://flamin-go.pages.dev/docs/tools/sentinel): Headless web crawler and positioning diff tracker for B2B SaaS verticals.
+- [Decision Graph](https://flamin-go.pages.dev/docs/tools/decision-graph): Semantica-style deterministic causal DAG tracker for agent action provenance.
+- [Anydoc Cleaner](https://flamin-go.pages.dev/docs/tools/anydoc): High-speed document to clean markdown parser optimized for context windows.
+- [Persona Guard](https://flamin-go.pages.dev/docs/tools/persona-guard): Multi-tenant brand and identity isolation validator preventing credential leaks.
 
-### Authentication
-All HTTP requests require a standard Bearer token in the `Authorization` header:
-```http
-Authorization: Bearer flm_live_xxxxxxxxxxxxxxxxxxxxxxxx
-```
+## Pricing & Rate Limits
+- [Pricing Tiers](https://flamin-go.pages.dev/pricing): Solo Operator ($29/mo, 1k calls), Autonomous Fleet ($199/mo, 25k calls), Enterprise Swarm ($799/mo, 150k calls).
+- [API Authentication](https://flamin-go.pages.dev/docs/auth): Bearer token authentication for headless agents.
 
----
-
-## 2. FastMCP Tool Definitions & Schemas
-
-### Tool: `track_competitor_diff`
-Monitors target URLs, extracts DOM diffs, analyzes positioning shifts, and generates executive teardowns.
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "target_url": {
-      "type": "string",
-      "format": "uri",
-      "description": "Full URL of competitor landing page or pricing table."
-    },
-    "comparison_baseline_id": {
-      "type": "string",
-      "description": "Previous snapshot ID to compare against. If omitted, captures new baseline."
-    },
-    "extract_pricing": {
-      "type": "boolean",
-      "default": true,
-      "description": "Extract structured pricing tiers and interaction caps."
-    }
-  },
-  "required": ["target_url"]
-}
-```
-
-**Output Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "status": { "type": "string", "enum": ["success", "unchanged", "error"] },
-    "snapshot_id": { "type": "string" },
-    "positioning_changes": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "field": { "type": "string" },
-          "previous": { "type": "string" },
-          "current": { "type": "string" },
-          "impact_score": { "type": "number", "minimum": 0, "maximum": 1 }
-        }
-      }
-    },
-    "pricing_diff": { "type": "object" }
-  }
-}
-```
-
----
-
-### Tool: `clean_document_to_markdown`
-Firecrawl-style document sanitization that converts messy HTML, PDF, or Word documents into clean, LLM-ready markdown.
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "source_content": {
-      "type": "string",
-      "description": "Raw HTML string or base64 encoded document bytes."
-    },
-    "content_type": {
-      "type": "string",
-      "enum": ["html", "pdf", "docx"],
-      "default": "html"
-    },
-    "strip_navigation": {
-      "type": "boolean",
-      "default": true
-    },
-    "preserve_tables": {
-      "type": "boolean",
-      "default": true
-    }
-  },
-  "required": ["source_content"]
-}
-```
-
-**Output Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "markdown": { "type": "string" },
-    "token_count_estimate": { "type": "integer" },
-    "extracted_links": {
-      "type": "array",
-      "items": { "type": "string" }
-    }
-  }
-}
-```
-
----
-
-### Tool: `record_decision_node`
-Semantica pattern: appends a deterministic decision node to the causal provenance DAG.
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "node_id": { "type": "string" },
-    "parent_node_ids": {
-      "type": "array",
-      "items": { "type": "string" }
-    },
-    "trigger_event": { "type": "string" },
-    "reasoning": { "type": "string" },
-    "action_taken": { "type": "string" },
-    "confidence_score": { "type": "number" },
-    "metadata": { "type": "object" }
-  },
-  "required": ["node_id", "trigger_event", "reasoning", "action_taken"]
-}
-```
-
----
-
-### Tool: `verify_persona_isolation`
-MatrAIx pattern: validates outbound payloads against cross-brand contamination and identity leakage.
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "brand_context": {
-      "type": "string",
-      "enum": ["FLAMINGO", "ZERO_HYPE", "RENAISSANCE_GYM", "AI_BABIES", "TAAM", "APONIA", "ANONYMOUS_PERSONA"]
-    },
-    "outbound_payload": { "type": "string" }
-  },
-  "required": ["brand_context", "outbound_payload"]
-}
-```
-
-**Output Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "is_valid": { "type": "boolean" },
-    "violations": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "rule": { "type": "string" },
-          "matched_pattern": { "type": "string" },
-          "severity": { "type": "string", "enum": ["FATAL", "WARNING"] }
-        }
-      }
-    }
-  }
-}
-```
-
----
-
-## 3. HTTP REST Endpoints
-
-### `POST /api/v1/agent/invoke`
-Synchronous or asynchronous tool invocation gateway.
-- **Request Body:** `{ "tool_name": "track_competitor_diff", "arguments": { ... } }`
-- **Response 200:** `{ "success": true, "data": { ... }, "interaction_quota_remaining": 24890 }`
-- **Response 429:** `{ "error": "interaction_cap_exceeded", "limit": 25000, "upgrade_url": "https://flamin.go/pricing" }`
-
-### `GET /api/v1/graph/trace?node_id={node_id}`
-Returns complete causal chain of reasoning for any historical agent decision.
-
----
-
-## 4. Error Code Reference
-
-| Code | HTTP Status | Meaning | Resolution |
-| :--- | :--- | :--- | :--- |
-| `AUTH_INVALID_TOKEN` | 401 | Missing or invalid API bearer token | Verify token in operator cockpit |
-| `QUOTA_EXCEEDED` | 429 | Monthly agent interaction cap reached | Upgrade subscription tier |
-| `ISOLATION_VIOLATION` | 403 | PersonaGuard intercepted leaked entity metadata | Sanitize outbound payload |
-| `RATE_LIMIT_BURST` | 429 | Exceeded burst limit of 50 calls/sec | Apply exponential backoff |
-| `PARSER_MALFORMED_DOM` | 422 | Target document could not be sanitized | Check source format |
-
----
-
-## FAQ - Flamin.go
-
-> Canonical: https://flamin-go.pages.dev/faq/ | Last updated: 2026-10-14
-
-### 1. What is a Flamin teardown?
-An async roast of your first 5 seconds: hero, headline, CTA, proof. Friction points plus exact rewrites, in 24-48h. No call.
-
-### 2. How fast do I get it?
-24-48h async. You send the URL; you get a written teardown document. No kickoff, no debrief call.
-
-### 3. What do you actually rewrite?
-Headlines first, then subhead, CTA microcopy, proof order. You get before/after blocks pasted straight into the page, so your team ships without guessing. See the 49 USD Studio Pack.
-
-### 4. Who is this for?
-Solo founders and micro-SaaS teams of 1-5 people. Indie and bootstrapped. Allergic to enterprise process. If your launch needs a steering committee, this is not for you.
-
-### 5. Do you touch design or only copy?
-Copy drives it; design notes only where layout kills conversion (contrast, hierarchy, one primary CTA). No full redesign.
-
-### 6. How is this different from a generic audit?
-First-5-seconds lens, CTA friction scoring, paste-ready rewrites. Not a 40-page PDF with stock advice.
-
-### 7. What do you need from me?
-URL, one-line ICP, current CTA and price. Enough to start.
-
-### 8. Do you guarantee conversion lift?
-No. Teardowns raise clarity and click probability; traffic quality still matters. Shippable fixes guaranteed, not percentages.
-
-### 9. What does the 49 USD Studio Pack include?
-Written teardown plus rewrite blocks plus machine endpoints (llms.txt, ai-info.html). One-time, async, no subscription.
-
-### 10. How do we start?
-Pick the Studio Pack CTA, send URL plus ICP. Teardown lands in 24-48h. Iterate async after.
-
+## Canonical Hubs & Author
+- Production Endpoint: https://flamin-go.pages.dev/
+- GitHub: https://github.com/adrianpeticila/flamin-go
+- Author Ecosystem: Adrian M. Peticila (https://peticila.ro/#person)
+- Wikidata: https://www.wikidata.org/wiki/Q140362129
+- ORCID: https://orcid.org/0009-0005-9601-9527

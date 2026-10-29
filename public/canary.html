@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flamin.go Canary - Cold Email Spamtrap &amp; Deliverability Sentinel</title>
+<meta name="description" content="Verify cold email domain blacklist, DNS records (SPF, DKIM, DMARC), and spam trigger risk in 30 seconds before sending campaigns.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<style>
+/* ============================================================
+   // 00. DESIGN TOKENS
+   Flamin.go Canary v1.4 - handcrafted, zero frameworks.
+   Palette: paper white, ink slate, flamingo pink.
+   ============================================================ */
+:root {
+  --paper: #ffffff;
+  --paper-alt: #f9f9fb;
+  --ink: #0f172a;
+  --ink-2: #1e293b;
+  --ink-mute: #64748b;
+  --line: #e2e8f0;
+  --line-dash: #cbd5e1;
+  --pink: #FF1A75;
+  --pink-deep: #E60067;
+  --pink-hot: #FF3385;
+  --pink-wash: #fff1f6;
+  --ok: #0a7d43;
+  --warn: #b45309;
+  --fail: #dc2626;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --wrap: 1060px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { max-width: 100%; display: block; }
+h1, h2, h3, h4 { line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 .6em; color: var(--ink); }
+p { margin: 0 0 1em; }
+a { color: inherit; text-decoration-color: rgba(255,26,117,.45); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--pink); text-decoration-thickness: 3px; }
+code, pre { font-family: var(--mono); font-size: .92em; }
+::selection { background: #ffd6e5; color: var(--ink); }
+:focus-visible { outline: 3px solid var(--pink-hot); outline-offset: 2px; border-radius: 2px; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 99;
+  background: var(--ink); color: #fff; padding: .6rem 1rem;
+  font-family: var(--mono); font-size: .8rem;
+}
+.skip-link:focus { left: 0; }
+
+.wrap { width: min(var(--wrap), 92vw); margin-inline: auto; }
+.mono { font-family: var(--mono); }
+.hl { border-bottom: 0.13em solid var(--pink); padding-bottom: 0.02em; }
+
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: .72rem;
+  border: 1px solid var(--line-dash); border-radius: 999px;
+  padding: .12em .7em; color: var(--ink-mute); background: var(--paper);
+  white-space: nowrap;
+}
+.tag.pink { border-color: rgba(255,26,117,.5); color: var(--pink-deep); background: var(--pink-wash); }
+
+/* Chrome & Header */
+.topstrip { height: 5px; background: linear-gradient(90deg, var(--pink-deep), var(--pink), var(--pink-hot)); }
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding-block: .8rem;
+}
+.brand {
+  font-weight: 800; font-size: 1.18rem; letter-spacing: -0.03em;
+  text-decoration: none; white-space: nowrap;
+}
+.brand-ver { font-family: var(--mono); font-size: .68rem; color: var(--ink-mute); margin-left: .35rem; vertical-align: super; }
+.status-pill {
+  display: inline-flex; align-items: center; gap: .45em;
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .04em;
+  border: 1px solid var(--line-dash); border-radius: 999px;
+  padding: .28em .85em; color: var(--ink-2); background: var(--paper-alt);
+}
+.status-pill .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ok); box-shadow: 0 0 0 3px rgba(10,125,67,.14);
+}
+.site-nav { margin-left: auto; display: flex; gap: 1.1rem; flex-wrap: wrap; }
+.site-nav a {
+  font-family: var(--mono); font-size: .8rem; text-decoration: none;
+  color: var(--ink-2); padding-block: .2em;
+  border-bottom: 3px solid transparent;
+}
+.site-nav a:hover { border-bottom-color: var(--pink); color: var(--ink); }
+.site-nav a.active { border-bottom-color: var(--pink); color: var(--pink-deep); font-weight: 700; }
+.header-cta {
+  font-family: var(--mono); font-size: .78rem; text-decoration: none;
+  border: 1px solid var(--ink); border-radius: 999px;
+  padding: .38em 1em; white-space: nowrap;
+}
+.header-cta:hover { background: var(--ink); color: #fff; }
+
+/* Hero */
+.hero {
+  position: relative;
+  padding-block: 4.5rem 3.5rem;
+  background-image: radial-gradient(#eef1f6 1px, transparent 1.4px);
+  background-size: 24px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.hero-kicker { font-family: var(--mono); font-size: .74rem; color: var(--ink-mute); letter-spacing: .06em; margin-bottom: 1.2rem; }
+.hero-kicker b { color: var(--ok); font-weight: 600; }
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  max-width: 22ch;
+  margin-bottom: 1rem;
+}
+.lede { font-size: clamp(1.05rem, 1.8vw, 1.2rem); color: var(--ink-2); max-width: 62ch; }
+.hero-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.4rem; }
+
+/* Diagnostic Scanner Form */
+.scanner-widget {
+  margin: 2.4rem 0 1rem;
+  background: var(--paper-alt);
+  border: 1px solid var(--line-dash);
+  border-radius: 12px;
+  padding: 1.8rem;
+  max-width: 780px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+.widget-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;
+}
+.widget-title {
+  font-family: var(--mono); font-size: .78rem; font-weight: 700;
+  color: var(--pink-deep); letter-spacing: .05em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+}
+.widget-title .live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--pink);
+}
+
+.form-grid {
+  display: grid; gap: 1rem;
+}
+.field-label {
+  display: block; font-family: var(--mono); font-size: .74rem;
+  font-weight: 700; color: var(--ink-mute); letter-spacing: .05em;
+  text-transform: uppercase; margin-bottom: .4rem;
+}
+.input-text, .textarea-box {
+  width: 100%; font-family: var(--mono); font-size: .88rem;
+  padding: .75rem 1rem; border: 1px solid var(--line-dash);
+  border-radius: 8px; background: var(--paper); color: var(--ink);
+  outline: none; transition: border-color .15s ease;
+}
+.input-text:focus, .textarea-box:focus {
+  border-color: var(--pink);
+}
+.textarea-box {
+  font-family: var(--sans); font-size: .92rem;
+  min-height: 120px; resize: vertical; line-height: 1.6;
+}
+
+.btn {
+  font-family: var(--mono); font-size: .84rem; text-align: center;
+  border-radius: 8px; padding: .8em 1.4em; text-decoration: none; cursor: pointer;
+  border: 1px solid var(--ink); background: var(--paper); color: var(--ink);
+  transition: transform .08s ease; display: inline-flex; align-items: center;
+  justify-content: center; gap: .5rem;
+}
+.btn:hover { background: var(--paper-alt); }
+.btn:active { transform: translateY(1px); }
+.btn-solid { background: var(--pink); border-color: var(--pink); color: #fff; font-weight: 700; }
+.btn-solid:hover { background: var(--pink-deep); border-color: var(--pink-deep); color: #fff; }
+.btn-solid:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Results Terminal Panel */
+.canary-result {
+  margin-top: 1.6rem;
+  border-top: 1px dashed var(--line-dash);
+  padding-top: 1.6rem;
+}
+.result-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.2rem;
+}
+.domain-display {
+  font-size: 1.25rem; font-weight: 800; margin: 0; color: var(--ink);
+}
+.verdict-badge {
+  font-family: var(--mono); font-size: .8rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: .35em .9em; border-radius: 6px;
+}
+.verdict-green { background: #dcfce7; color: var(--ok); border: 1px solid #86efac; }
+.verdict-yellow { background: #fef3c7; color: var(--warn); border: 1px solid #fde68a; }
+.verdict-red { background: #fee2e2; color: var(--fail); border: 1px solid #fca5a5; }
+
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: .8rem; margin-bottom: 1.4rem;
+}
+.metric-card {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: 8px; padding: .75rem 1rem;
+}
+.metric-card .label {
+  font-family: var(--mono); font-size: .68rem; color: var(--ink-mute);
+  text-transform: uppercase; letter-spacing: .08em; display: block; margin-bottom: .25rem;
+}
+.metric-card .val {
+  font-family: var(--mono); font-size: .88rem; font-weight: 700; color: var(--ink);
+}
+.val-ok { color: var(--ok); }
+.val-warn { color: var(--warn); }
+.val-fail { color: var(--fail); }
+
+.risk-meter {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: 8px; padding: .85rem 1rem; margin-bottom: 1.4rem;
+}
+.risk-meter-head {
+  display: flex; justify-content: space-between; font-family: var(--mono);
+  font-size: .75rem; color: var(--ink-mute); margin-bottom: .4rem;
+}
+.risk-bar-track {
+  height: 8px; background: var(--line); border-radius: 4px; overflow: hidden;
+}
+.risk-bar-fill {
+  height: 100%; width: 0%; transition: width .3s ease;
+}
+
+.notice-box {
+  background: var(--paper); border-left: 4px solid var(--pink);
+  border-radius: 0 8px 8px 0; padding: .9rem 1.1rem;
+  margin-bottom: 1.4rem; font-size: .9rem;
+}
+.notice-box ul {
+  margin: .4rem 0 0; padding-left: 1.2rem; color: var(--ink-2); font-size: .85rem;
+}
+.notice-box li { margin-bottom: .25rem; }
+
+.placement-pass {
+  background: var(--paper); border: 1px solid var(--line-dash);
+  border-top: 3px solid var(--pink); border-radius: 8px; padding: 1.4rem;
+}
+.placement-pass h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: .3rem; }
+.placement-pass p { font-size: .88rem; color: var(--ink-mute); margin-bottom: 1rem; }
+.placement-row {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .8rem;
+}
+.price-display {
+  font-family: var(--mono); font-size: 1.6rem; font-weight: 800; color: var(--ink);
+}
+.price-note { font-size: .76rem; color: var(--ink-mute); font-weight: normal; margin-left: .3rem; }
+
+/* Footer */
+footer.site-foot {
+  background: var(--paper-alt); border-top: 1px solid var(--line);
+  padding-block: 3rem 2.2rem; margin-top: 5rem;
+}
+.foot-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr;
+  gap: 2rem; margin-bottom: 2.2rem;
+}
+.foot-brand p { font-size: .88rem; color: var(--ink-mute); max-width: 36ch; }
+.foot-col h4 {
+  font-family: var(--mono); font-size: .7rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-mute); margin-bottom: .8rem;
+}
+.foot-col ul { list-style: none; margin: 0; padding: 0; }
+.foot-col li { padding-block: .22rem; font-size: .88rem; }
+.foot-col a { text-decoration: none; }
+.foot-col a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+.foot-meta {
+  font-family: var(--mono); font-size: .74rem; color: var(--ink-mute);
+  border-top: 1px dashed var(--line-dash); padding-top: 1.3rem;
+  display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; align-items: baseline;
+}
+.foot-meta .sep { color: #cbd5e1; }
+.foot-meta b { color: var(--ink-2); font-weight: 600; }
+
+@media (max-width: 768px) {
+  .foot-grid { grid-template-columns: 1fr; }
+  .site-nav { order: 3; width: 100%; margin-left: 0; padding-top: .4rem; }
+}
+</style>
+</head>
+<body id="top">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="topstrip" aria-hidden="true"></div>
+
+<!-- // HEADER -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="flamingo">Flamin.go</span> <span class="flamingo" aria-hidden="true">🦩</span><span class="brand-ver">v1.4</span></a>
+    <span class="status-pill"><span class="dot" aria-hidden="true"></span>Canary Sentinel Live</span>
+    <nav class="site-nav" aria-label="Quick jump">
+      <a href="/">Home</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/#playbooks">Playbooks</a>
+      <a href="/#endpoints">Machine Endpoints</a>
+      <a href="/canary" class="active">Canary</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/llms.txt">llms.txt</a>
+    </nav>
+    <a class="header-cta" href="/#pricing">$49 Studio Pack</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- // HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <p class="hero-kicker mono">CANARY ENGINE &middot; [STATUS: <b>200 OK</b>] &middot; [LATENCY: ~30ms]</p>
+      <h1 id="hero-title">Cold Email <span class="hl">Spamtrap Canary</span> Sentinel</h1>
+      <p class="lede">Diagnostic deliverability audit for outbound founders. Verifies sending domain DNS records, flags spam trigger phrases, and detects blacklist risks in 30 seconds.</p>
+      <div class="hero-tags" role="list">
+        <span class="tag pink" role="listitem">[v1.4]</span>
+        <span class="tag" role="listitem">[ZERO FREELOADERS]</span>
+        <span class="tag" role="listitem">[CLOUDFLARE DOH]</span>
+        <span class="tag" role="listitem">[SHIPS IN ~30s]</span>
+      </div>
+
+      <!-- Live Canary Form Widget -->
+      <div class="scanner-widget">
+        <div class="widget-head">
+          <span class="widget-title">
+            <span class="live-dot" aria-hidden="true"></span>LIVE DELIVERABILITY AUDIT
+          </span>
+          <span class="tag pink">HEADLESS RUN</span>
+        </div>
+
+        <form id="canary-form" class="form-grid" onsubmit="event.preventDefault(); window.runCanaryAudit();">
+          <div>
+            <label for="canary-domain" class="field-label">Sending Domain</label>
+            <input type="text" id="canary-domain" class="input-text" placeholder="e.g. acmeoutbound.com" required autocomplete="off">
+          </div>
+
+          <div>
+            <label for="canary-subject" class="field-label">Cold Email Subject</label>
+            <input type="text" id="canary-subject" class="input-text" placeholder="Quick inquiry on your outbound pipeline" required autocomplete="off">
+          </div>
+
+          <div>
+            <label for="canary-body" class="field-label">Cold Email Pitch Body</label>
+            <textarea id="canary-body" class="textarea-box" placeholder="Paste your cold pitch here. We check trigger words, currency markers, caps frequency, link density, and opt-out statements." required></textarea>
+          </div>
+
+          <div>
+            <button type="submit" id="btn-run-canary" class="btn btn-solid" style="width: 100%;">
+              <span>Run Canary Diagnostic &rarr;</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Results Area -->
+        <div id="canary-result" class="canary-result" style="display: none;">
+          <div class="result-head">
+            <div>
+              <span class="mono" style="font-size: .72rem; color: var(--ink-mute); text-transform: uppercase;">AUDIT TARGET</span>
+              <h2 id="res-domain" class="domain-display">Domain</h2>
+            </div>
+            <div id="res-verdict" class="verdict-badge verdict-green">SAFE</div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span class="label">MX Mail Routing</span>
+              <span id="res-mx" class="val val-ok">Configured</span>
+            </div>
+            <div class="metric-card">
+              <span class="label">SPF Record</span>
+              <span id="res-spf" class="val val-ok">Valid</span>
+            </div>
+            <div class="metric-card">
+              <span class="label">DMARC Policy</span>
+              <span id="res-dmarc" class="val val-ok">Active</span>
+            </div>
+          </div>
+
+          <div class="risk-meter">
+            <div class="risk-meter-head">
+              <span>Spam Penalty Score</span>
+              <b id="res-risk-score" class="mono" style="color: var(--ink);">0 / 100</b>
+            </div>
+            <div class="risk-bar-track">
+              <div id="res-risk-fill" class="risk-bar-fill" style="background: var(--ok); width: 0%;"></div>
+            </div>
+          </div>
+
+          <div id="res-issues-box" class="notice-box" style="display: none;">
+            <strong class="mono" style="color: var(--pink-deep); font-size: .8rem; text-transform: uppercase;">Flagged Deliverability Bottlenecks</strong>
+            <ul id="res-issues-list"></ul>
+          </div>
+
+          <div class="placement-pass">
+            <h3>5-Seed Live Placement Test</h3>
+            <p>Preliminary audit scans DNS and textual spam signals. The live test sends active canary messages to 5 monitored seed mailboxes across Google Workspace, Outlook 365, and iCloud to measure exact inbox versus junk routing.</p>
+            <div class="placement-row">
+              <div class="price-display">$1 <span class="price-note">trial (5 tests), then $9/mo</span></div>
+              <a href="https://flamin-go.pages.dev/api/catalog.json" class="btn btn-solid" id="seed-checkout-link">Order 5 Seeds ($1) &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- // FOOTER -->
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="flamingo">Flamin.go</span> <span class="flamingo" aria-hidden="true">🦩</span></a>
+        <p>The B2A Intelligence Toolkit. Turn competitor gaps into automated customer acquisition pipelines.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/faq/">FAQ</a></li>
+          <li><a href="/#playbooks">Playbooks</a></li>
+          <li><a href="/canary">Canary Sentinel</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Machine Specs</h4>
+        <ul>
+          <li><a href="/llms.txt">llms.txt</a></li>
+          <li><a href="/llms-full.txt">llms-full.txt</a></li>
+          <li><a href="/api/catalog.json">api/catalog.json</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-meta">
+      <span><b>Flamin.go</b> &middot; Autonomous Micro-Tool</span>
+      <span class="sep">/</span>
+      <span>Zero Freeloader Tier</span>
+      <span class="sep">/</span>
+      <span>Cloudflare Edge Delivery</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.runCanaryAudit = async function() {
+  const domainInput = document.getElementById("canary-domain");
+  const subjectInput = document.getElementById("canary-subject");
+  const bodyInput = document.getElementById("canary-body");
+  const btn = document.getElementById("btn-run-canary");
+  const resultBox = document.getElementById("canary-result");
+
+  const domain = (domainInput.value || "").trim();
+  const subject = (subjectInput.value || "").trim();
+  const body = (bodyInput.value || "").trim();
+
+  if (!domain) return;
+
+  btn.disabled = true;
+  btn.innerHTML = "<span>Auditing DNS &amp; Copy...</span>";
+
+  try {
+    const res = await fetch("/api/canary/check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ domain, subject, body })
+    });
+
+    const data = await res.json();
+    if (data.status !== "ok") {
+      alert(data.message || "Diagnostic failed.");
+      return;
+    }
+
+    // Populate Domain
+    document.getElementById("res-domain").textContent = data.domain;
+
+    // Verdict Badge
+    const verdictElem = document.getElementById("res-verdict");
+    verdictElem.textContent = data.verdict.toUpperCase();
+    verdictElem.className = "verdict-badge verdict-" + data.verdict;
+
+    // MX
+    const mxElem = document.getElementById("res-mx");
+    if (data.dns.mx.valid) {
+      mxElem.textContent = "Configured (" + data.dns.mx.count + " records)";
+      mxElem.className = "val val-ok";
+    } else {
+      mxElem.textContent = "Missing";
+      mxElem.className = "val val-fail";
+    }
+
+    // SPF
+    const spfElem = document.getElementById("res-spf");
+    if (data.dns.spf.found && data.dns.spf.valid) {
+      spfElem.textContent = "Valid (" + data.dns.spf.policy + ")";
+      spfElem.className = "val val-ok";
+    } else if (data.dns.spf.found) {
+      spfElem.textContent = "Unsafe policy";
+      spfElem.className = "val val-warn";
+    } else {
+      spfElem.textContent = "Missing";
+      spfElem.className = "val val-fail";
+    }
+
+    // DMARC
+    const dmarcElem = document.getElementById("res-dmarc");
+    if (data.dns.dmarc.found) {
+      dmarcElem.textContent = "Active (" + data.dns.dmarc.policy + ")";
+      dmarcElem.className = "val val-ok";
+    } else {
+      dmarcElem.textContent = "Missing";
+      dmarcElem.className = "val val-warn";
+    }
+
+    // Risk Meter
+    const score = data.total_risk_score;
+    document.getElementById("res-risk-score").textContent = score + " / 100";
+    const fill = document.getElementById("res-risk-fill");
+    fill.style.width = Math.min(100, score) + "%";
+    fill.style.background = score > 50 ? "var(--fail)" : (score > 20 ? "var(--warn)" : "var(--ok)");
+
+    // Issues List
+    const issuesBox = document.getElementById("res-issues-box");
+    const issuesList = document.getElementById("res-issues-list");
+    issuesList.innerHTML = "";
+
+    const combinedIssues = [...(data.critical_issues || [])];
+    for (const item of (data.copy_analysis.flagged_items || [])) {
+      combinedIssues.push(item.reason + " (penalty: +" + item.penalty + ")");
+    }
+
+    if (combinedIssues.length > 0) {
+      for (const issue of combinedIssues) {
+        const li = document.createElement("li");
+        li.textContent = issue;
+        issuesList.appendChild(li);
+      }
+      issuesBox.style.display = "block";
+    } else {
+      issuesBox.style.display = "none";
+    }
+
+    resultBox.style.display = "block";
+    resultBox.scrollIntoView({ behavior: "smooth" });
+  } catch (err) {
+    alert("Connection error: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "<span>Run Canary Diagnostic &rarr;</span>";
+  }
+};
+</script>
+</body>
+</html>

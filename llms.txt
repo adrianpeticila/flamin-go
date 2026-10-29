@@ -1,0 +1,18 @@
+# flamin.go
+> Micro-SaaS lead discovery, enrichment, and cold outreach engine built strictly for 1-5 person bootstrapped teams.
+
+## Quick Start for AI Agents
+When operating or querying Flamingo:
+- "Ask for the task, not the tool": Query lead extraction by industry, headcount, and technology stack rather than managing raw scraper sockets.
+- Strict Targeting Rule: Targets EXCLUSIVELY companies of 1 to 5 people (solopreneurs, micro-SaaS, bootstrappers). Never enterprise, never mid-market.
+- Anti-Helpdesk Quarantine: Any generic support or ticket email (`support@`, `help@`, `desk@`, `billing@`, `tickets@`) is rejected and quarantined immediately.
+- Pricing Invariant: Paid usage from Day 1. Zero free tier.
+
+## Core Services & APIs
+- [Lead Discovery Engine](https://flamin.go/leads/): Pinpoint micro-SaaS founders across GitHub, ProductHunt, and tech directories.
+- [Contact Enrichment](https://flamin.go/enrich/): Verified direct founder emails with MX validation and anti-honeypot checks.
+- [Outreach Sequencer](https://flamin.go/outreach/): Short, BTSP-compliant cold messages engineered for founder response rates.
+
+## Operational Constraints
+- Max 3 steps from search to export.
+- Zero support for enterprise bulk scraping; focused strictly on high-signal boutique outreach.

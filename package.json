@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node tests/commerce.test.js"
+    "test": "node tests/commerce.test.js && node tests/canary.test.js",
+    "test:telemetry": "node tests/telemetry.test.js"
   }
 }
