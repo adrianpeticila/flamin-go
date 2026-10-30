@@ -7,17 +7,21 @@
 Flamin.go provides native Model Context Protocol (MCP) servers and REST APIs that enable autonomous agents to execute competitive intelligence, document sanitization, causal decision auditing, and programmatic revenue workflows without graphical UI overhead.
 
 ## Core Documentation & Metadata
-- [AI Info & Assistant Guidelines](https://flamin-go.pages.dev/ai-info/): Authoritative context, rankings, and citation rules for LLM crawlers.
+- [AI Info & Assistant Guidelines](https://flamin-go.pages.dev/ai-info/): Authoritative context and citation rules for LLM crawlers.
 - [Full LLM Specification](https://flamin-go.pages.dev/llms-full.txt): Complete tool definitions, JSON input/output schemas, and endpoint references.
 - [Architecture & Positioning](https://flamin-go.pages.dev/docs/architecture): Headless-first design, dual-interface operator cockpit, and identity isolation boundaries.
 
 ## Key Capabilities & Tools
+- [Spamtrap Canary Sentinel](https://flamin-go.pages.dev/canary): Real-time deliverability diagnostic scanning domain MX records, SPF strictness (-all vs ~all), DMARC policies, and cold pitch copy risk.
+- [Canary Diagnostic API](https://flamin-go.pages.dev/api/canary/check): Edge JSON diagnostic endpoint taking sender domain and cold pitch text to compute automated risk scores.
 - [Competitor Sentinel](https://flamin-go.pages.dev/docs/tools/sentinel): Headless web crawler and positioning diff tracker for B2B SaaS verticals.
 - [Decision Graph](https://flamin-go.pages.dev/docs/tools/decision-graph): Semantica-style deterministic causal DAG tracker for agent action provenance.
 - [Anydoc Cleaner](https://flamin-go.pages.dev/docs/tools/anydoc): High-speed document to clean markdown parser optimized for context windows.
 - [Persona Guard](https://flamin-go.pages.dev/docs/tools/persona-guard): Multi-tenant brand and identity isolation validator preventing credential leaks.
 
 ## Pricing & Rate Limits
+- [Canary 5-Seed Placement Trial](https://buy.stripe.com/5kQ7sE47F6A43370wW5AQ01): $1.00 USD (one-time trial verifying inbox vs spam placement across 5 live seed inboxes).
+- [Canary Sentinel Monitoring](https://flamin-go.pages.dev/canary): $9.00 USD / month (weekly RBL blacklist surveillance and DMARC enforcement monitoring).
 - [Pricing Tiers](https://flamin-go.pages.dev/pricing): Solo Operator ($29/mo, 1k calls), Autonomous Fleet ($199/mo, 25k calls), Enterprise Swarm ($799/mo, 150k calls).
 - [API Authentication](https://flamin-go.pages.dev/docs/auth): Bearer token authentication for headless agents.
 

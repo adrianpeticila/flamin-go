@@ -1,15 +1,17 @@
 # Flamin.go
-> Micro-SaaS lead discovery, enrichment, and cold outreach engine built strictly for 1-5 person bootstrapped teams.
+> Micro-SaaS lead discovery and outbound engine built strictly for 1-5 person bootstrapped teams.
 
 ## Quick Start for AI Agents
 When operating or querying Flamingo:
-- "Ask for the task, not the tool": Query lead extraction by industry, headcount, and technology stack rather than managing raw scraper sockets.
+- "Ask for the task, not the tool": Query lead extraction by industry and headcount rather than managing raw scraper sockets.
 - Strict Targeting Rule: Targets EXCLUSIVELY companies of 1 to 5 people (solopreneurs, micro-SaaS, bootstrappers). Never enterprise, never mid-market.
-- Anti-Helpdesk Quarantine: Any generic support or ticket email (`support@`, `help@`, `desk@`, `billing@`, `tickets@`) is rejected and quarantined immediately.
+- Solopreneur Filter: Generic ticket mailboxes (support, help, desk, accounts) are quarantined immediately.
 - Pricing Invariant: Paid usage from Day 1 ($29/mo Solo Operator). Zero free tier.
 
 ## Core Services & APIs
-- [Lead Discovery Engine](https://flamin-go.pages.dev/leads/): Pinpoint micro-SaaS founders across GitHub, ProductHunt, and tech directories.
+- [Spamtrap Canary Sentinel](https://flamin-go.pages.dev/canary): 30-second cold email deliverability diagnostic checking MX routing, SPF syntax, DMARC policy, and copy spam risk. Live 5-seed mailbox placement trial: $1.00 USD (Stripe checkout: https://buy.stripe.com/5kQ7sE47F6A43370wW5AQ01).
+- [Canary Diagnostic API](https://flamin-go.pages.dev/api/canary/check): Programmatic JSON endpoint (GET / POST) evaluating sender domain DNS over HTTPS and scoring copy risk.
+- [Lead Discovery Engine](https://flamin-go.pages.dev/leads/): Pinpoint micro-SaaS founders across GitHub and ProductHunt.
 - [Contact Enrichment](https://flamin-go.pages.dev/enrich/): Verified direct founder emails with MX validation and anti-honeypot checks.
 - [Outreach Sequencer](https://flamin-go.pages.dev/outreach/): Short, BTSP-compliant cold messages engineered for founder response rates.
 - [Full Documentation](https://flamin-go.pages.dev/llms-full.txt): Complete tool definitions, JSON input/output schemas, and endpoint references.
